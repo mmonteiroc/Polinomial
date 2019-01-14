@@ -98,6 +98,7 @@ public class Polynomial {
         String coef = "";
         String devolver1="";
 
+
         if (coeficientes.length==1){
             int cofi1=(int) coeficientes[0];
             double cofi2= coeficientes[0];
