@@ -18,17 +18,39 @@ public class Polynomial {
         //Lo que hago aqui es crear un nuevo array para no referenciar al
         // que nos pasan ya que el usuario podria modificar ese array
         //entonces usaremos una copia
-        this.coeficientes=new float[coeficientes.length];
+
+
+        int x = 0;
         for (int i = 0; i < coeficientes.length; i++) {
-            this.coeficientes[i] = coeficientes[i];
+            if (coeficientes[i]==0){
+                x++;
+            }else {
+                break;
+            }
         }
 
+        if (x==coeficientes.length){
+
+            this.coeficientes=new float[1];
+            this.coeficientes[0]=0;
+        }else {
+            this.coeficientes=new float[coeficientes.length-x];
+            for (int i = x; i < coeficientes.length; i++) {
+                this.coeficientes[i] = coeficientes[i];
+            }
+        }
 
     }
 
     // Constructor a partir d'un string
     public Polynomial(String s) {
-
+        int cantidadDex=0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i)=='x'){
+                cantidadDex++;
+            }
+        }
+        System.out.println(cantidadDex);
 
 
 
@@ -83,10 +105,17 @@ public class Polynomial {
     @Override
     public boolean equals(Object o) {
 
+        Polynomial p1 = (Polynomial) o;
+
+        for (int i = 0; i < this.coeficientes.length; i++) {
+            if (this.coeficientes[i]!=p1.coeficientes[i]){
+                return false;
+            }
+        }
 
 
 
-        return false;
+        return true;
     }
 
     // Torna la representació en forma de String del polinomi. Override d'un mètode de la classe Object
@@ -179,9 +208,7 @@ public class Polynomial {
 
         }
 
-        if (devolver.equals("")){
-            return "0";
-        }
+
         return devolver;
     }
 
@@ -193,8 +220,6 @@ public class Polynomial {
 class main{
     public static void main(String[] args) {
 
-        Polynomial p = new Polynomial(new float[]{0,0,0});
-        System.out.println(p.toString());
 
     }
 }
