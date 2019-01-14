@@ -23,7 +23,7 @@ public class PolynomialTest {
         p = new Polynomial(new float[]{0, 0, 0});
         assertEquals("0", p.toString());
 
-        p = new Polynomial(new float[]{0, 0, 0});
+        p = new Polynomial(new float[]{ 0, 0});
         assertEquals(new Polynomial("0"), p);
 
         p = new Polynomial(new float[]{-6, 0, 0, 20, -8});

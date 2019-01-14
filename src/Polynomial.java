@@ -1,4 +1,4 @@
-import com.sun.org.apache.xpath.internal.operations.String;
+
 
 public class Polynomial {
 
@@ -97,7 +97,7 @@ public class Polynomial {
         String simbolo = "";
         String coef = "";
         String devolver1="";
-
+        int comprovacion;
 
         if (coeficientes.length==1){
             int cofi1=(int) coeficientes[0];
@@ -176,8 +176,12 @@ public class Polynomial {
 
             simbolo="";
             elevacion++;
+
         }
 
+        if (devolver.equals("")){
+            return "0";
+        }
         return devolver;
     }
 
@@ -189,7 +193,7 @@ public class Polynomial {
 class main{
     public static void main(String[] args) {
 
-        Polynomial p = new Polynomial(new float[]{-4.4f, 0,5,3,-6,7});
+        Polynomial p = new Polynomial(new float[]{0,0,0});
         System.out.println(p.toString());
 
     }
