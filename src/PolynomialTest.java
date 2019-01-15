@@ -34,6 +34,16 @@ public class PolynomialTest {
     public void constructs2() {
         Polynomial p;
 
+
+        p = new Polynomial("0");
+        assertEquals("0", p.toString());
+
+        p = new Polynomial("3 - 3");
+        assertEquals("0", p.toString());
+
+        p = new Polynomial("3x - 3x");
+        assertEquals("0", p.toString());
+
         p = new Polynomial("3x + 5 + 2x^2");
         assertEquals("2x^2 + 3x + 5", p.toString());
 
@@ -45,15 +55,6 @@ public class PolynomialTest {
 
         p = new Polynomial("31x^7 + 3x^7 - 5x - 12x^2 - 15x - 2 - 9 + 20 + 2x^2");
         assertEquals("34x^7 - 10x^2 - 20x + 9", p.toString());
-
-        p = new Polynomial("0");
-        assertEquals("0", p.toString());
-
-        p = new Polynomial("3 - 3");
-        assertEquals("0", p.toString());
-
-        p = new Polynomial("3x - 3x");
-        assertEquals("0", p.toString());
 
         p = new Polynomial("0x^2 + 6x + 0");
         assertEquals("6x", p.toString());

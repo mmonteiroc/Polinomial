@@ -1,4 +1,6 @@
+import sun.awt.X11.XColor;
 
+import java.util.Arrays;
 
 public class Polynomial {
 
@@ -44,13 +46,117 @@ public class Polynomial {
 
     // Constructor a partir d'un string
     public Polynomial(String s) {
-        int cantidadDex=0;
+        int diferencia=0;
+        char negativo ='-';
+        char positivo ='+';
+
+
+
+
+
+        // Rutina que elimina espacios
+        StringBuilder polinomio = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i)=='x'){
-                cantidadDex++;
+            if (s.charAt(i)!=' '){
+                polinomio.append(s.charAt(i));
             }
         }
-        System.out.println(cantidadDex);
+
+
+        int contador=1;
+        for (int i = 2; i < polinomio.length() ; i++) {
+            if (polinomio.charAt(i)==positivo || polinomio.charAt(i)==negativo){
+                contador++;
+            }
+        }
+
+        double[] coeficientes   = new double[contador];
+        int[] potencia          = new int[contador];
+        boolean[] Xencontrada = new boolean[contador];
+
+
+        //Todas a false
+        for (int i = 0; i < Xencontrada.length; i++) {
+            Xencontrada[i]=false;
+        }
+
+
+        contador=0;
+
+        for (int i = 1; i < polinomio.length(); i++) {
+
+            if (polinomio.charAt(i)=='x'|| polinomio.charAt(i)=='X'){
+                Xencontrada[contador]=true;
+
+                if (polinomio.charAt(i+1)=='^'){
+
+                    // BUCLE PARA ENCONTRAR SIGUIENTE SIMBOLO
+
+                    String StringApasar = "";
+                    for (int j = i+2; j <polinomio.length() ; j++) {
+
+                        if (polinomio.charAt(j)==positivo||polinomio.charAt(j)==negativo){
+                            break;
+                        }
+                        StringApasar = StringApasar+polinomio.charAt(j);
+
+                    }
+
+                    potencia[contador]= Integer.parseInt(StringApasar);
+
+
+
+                }else {
+                    potencia[contador]=1;
+                }
+
+
+
+            }
+
+
+            if ((polinomio.charAt(i)==negativo || polinomio.charAt(i)==positivo) && !Xencontrada[contador]){
+                potencia[contador]=0;
+
+                Xencontrada[contador]=true;
+            }
+
+
+            if (polinomio.charAt(i)==negativo || polinomio.charAt(i)==positivo){
+                contador++;
+            }
+
+
+        }
+
+
+        StringBuilder polinomio1 = new StringBuilder();
+        for (int i = 0; i < polinomio.length(); i++) {
+
+            int longitud = polinomio.length();
+            if (polinomio.charAt(i)=='x'){
+                for (int j = i; j < polinomio.length(); j++) {
+
+                    if (polinomio.charAt(j)==positivo||polinomio.charAt(j)==negativo || j==polinomio.length()-1){
+
+                        i += j-i;
+                        break;
+                    }
+
+                }
+
+
+            }
+            polinomio1.append(polinomio.charAt(i));
+        }
+
+
+        System.out.println(polinomio1);
+
+
+        System.out.println(Arrays.toString(potencia));
+
+
 
 
 
@@ -104,19 +210,19 @@ public class Polynomial {
     // Torna "true" si els polinomis són iguals. Això és un override d'un mètode de la classe Object
     @Override
     public boolean equals(Object o) {
-
         Polynomial p1 = (Polynomial) o;
+        if (p1.coeficientes.length != this.coeficientes.length)return false;
 
         for (int i = 0; i < this.coeficientes.length; i++) {
             if (this.coeficientes[i]!=p1.coeficientes[i]){
                 return false;
             }
         }
-
-
-
         return true;
     }
+
+
+
 
     // Torna la representació en forma de String del polinomi. Override d'un mètode de la classe Object
     @Override
@@ -126,7 +232,6 @@ public class Polynomial {
         String simbolo = "";
         String coef = "";
         String devolver1="";
-        int comprovacion;
 
         if (coeficientes.length==1){
             int cofi1=(int) coeficientes[0];
@@ -202,13 +307,10 @@ public class Polynomial {
                 devolver= coef+"x^"+elevacion+" " + devolver;
             }
 
-
             simbolo="";
             elevacion++;
 
         }
-
-
         return devolver;
     }
 
@@ -219,6 +321,9 @@ public class Polynomial {
 
 class main{
     public static void main(String[] args) {
+
+        Polynomial p = new Polynomial(" 4x^6");
+
 
 
     }
