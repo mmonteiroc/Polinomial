@@ -8,6 +8,11 @@ public class Polynomial {
     private float[] coeficientes;
 
 
+
+
+
+
+
     // Constructor per defecte. Genera un polinomi zero
     public Polynomial() {
         coeficientes = new float[1];
@@ -63,6 +68,7 @@ public class Polynomial {
         }
 
 
+        // Cuenta numero de monomios en mi polinomio
         int contador=1;
         for (int i = 2; i < polinomio.length() ; i++) {
             if (polinomio.charAt(i)==positivo || polinomio.charAt(i)==negativo){
@@ -70,12 +76,19 @@ public class Polynomial {
             }
         }
 
+
+
+
         double[] coeficientes   = new double[contador];
         int[] potencia          = new int[contador];
+
+
+
+
+
         boolean[] Xencontrada = new boolean[contador];
 
-
-        //Todas a false
+        //Todas Xencontrada a false
         for (int i = 0; i < Xencontrada.length; i++) {
             Xencontrada[i]=false;
         }
@@ -130,31 +143,54 @@ public class Polynomial {
         }
 
 
+
+        //Elimina todo lo que no son coeficientes
         StringBuilder polinomio1 = new StringBuilder();
+
+        boolean comprovacion = false;
         for (int i = 0; i < polinomio.length(); i++) {
 
-            int longitud = polinomio.length();
-            if (polinomio.charAt(i)=='x'){
-                for (int j = i; j < polinomio.length(); j++) {
-
-                    if (polinomio.charAt(j)==positivo||polinomio.charAt(j)==negativo || j==polinomio.length()-1){
-
-                        i += j-i;
-                        break;
-                    }
-
-                }
-
-
+            if (polinomio.charAt(i)!='x' && comprovacion==false){
+                polinomio1.append(polinomio.charAt(i));
+            }else{
+                comprovacion=true;
             }
-            polinomio1.append(polinomio.charAt(i));
+
+
+            if ((polinomio.charAt(i)==positivo||polinomio.charAt(i)==negativo)&& i>0){
+                comprovacion=false;
+                polinomio1.append(polinomio.charAt(i));
+            }
         }
 
 
-        System.out.println(polinomio1);
+        String stringAdevolver="";
+        contador = 0;
+        for (int i = 0; i < polinomio1.length(); i++) {
 
+            if ((polinomio1.charAt(i)==positivo||polinomio1.charAt(i)==negativo)&& i>0){
+                coeficientes[contador]= Float.parseFloat(stringAdevolver);
+                stringAdevolver="";
+                contador++;
+            }
+
+
+            stringAdevolver= stringAdevolver + polinomio1.charAt(i);
+
+        }
+        coeficientes[contador]= Float.parseFloat(stringAdevolver);
+
+
+
+
+        System.out.println(polinomio1);
+        System.out.println(Arrays.toString(coeficientes));
 
         System.out.println(Arrays.toString(potencia));
+
+
+
+
 
 
 
@@ -322,7 +358,7 @@ public class Polynomial {
 class main{
     public static void main(String[] args) {
 
-        Polynomial p = new Polynomial(" 4x^6");
+        Polynomial p = new Polynomial(" 4x^2 +4 -3x² +3");
 
 
 
