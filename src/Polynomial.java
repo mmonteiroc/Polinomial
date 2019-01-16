@@ -51,12 +51,6 @@ public class Polynomial {
 
     // Constructor a partir d'un string
     public Polynomial(String s) {
-        int diferencia=0;
-        char negativo ='-';
-        char positivo ='+';
-
-
-
 
 
         // Rutina que elimina espacios
@@ -68,143 +62,68 @@ public class Polynomial {
         }
 
 
-        // Cuenta numero de monomios en mi polinomio
-        int contador=1;
-        for (int i = 2; i < polinomio.length() ; i++) {
-            if (polinomio.charAt(i)==positivo || polinomio.charAt(i)==negativo){
-                contador++;
-            }
-        }
+        int mayorPotencia = 0;
+        int potenciaActual=0;
 
+        String aPasar="";
 
-
-
-        double[] coeficientes   = new double[contador];
-        int[] potencia          = new int[contador];
-        boolean[] Xencontrada = new boolean[contador];
-
-        //Todas Xencontrada a false
-        for (int i = 0; i < Xencontrada.length; i++) {
-            Xencontrada[i]=false;
-        }
-
-
-        contador=0;
-
-
-        // Guardamos todas las potencias en nuestro array de potencias
-        for (int i = 1; i < polinomio.length(); i++) {
-
-            if (polinomio.charAt(i)=='x'|| polinomio.charAt(i)=='X'){
-                Xencontrada[contador]=true;
-
-                if (polinomio.charAt(i+1)=='^'){
-
-                    // BUCLE PARA ENCONTRAR SIGUIENTE SIMBOLO
-
-                    String StringApasar = "";
-                    for (int j = i+2; j <polinomio.length() ; j++) {
-
-                        if (polinomio.charAt(j)==positivo||polinomio.charAt(j)==negativo){
-                            break;
-                        }
-                        StringApasar = StringApasar+polinomio.charAt(j);
-
-                    }
-
-                    potencia[contador]= Integer.parseInt(StringApasar);
-
-
-
-                }else {
-                    potencia[contador]=1;
-                }
-
-
-
-            }
-
-
-            if ((polinomio.charAt(i)==negativo || polinomio.charAt(i)==positivo) && !Xencontrada[contador]){
-                potencia[contador]=0;
-
-                Xencontrada[contador]=true;
-            }
-
-
-            if (polinomio.charAt(i)==negativo || polinomio.charAt(i)==positivo){
-                contador++;
-            }
-
-
-        }
-
-
-
-        //Elimina todo lo que no son coeficientes
-        StringBuilder polinomio1 = new StringBuilder();
-
-        boolean comprovacionX = false;
+        // Encotrnamos la mayor potencia de todo el polinomo
         for (int i = 0; i < polinomio.length(); i++) {
 
-            if (polinomio.charAt(i)!='x' && comprovacionX==false && polinomio.charAt(i)!=negativo && polinomio.charAt(i)!=positivo){
-                polinomio1.append(polinomio.charAt(i));
-            }else{
-                comprovacionX=true;
+            if (polinomio.charAt(i)=='x'){
+                if (polinomio.charAt(i+1)=='^'){
+
+
+                    //Este bucle lo que hace es que te convierte numeros de mas de dos digitos a integer
+                    for (int j = i+2; j < polinomio.length(); j++) {
+
+                        if (polinomio.charAt(j)=='-' || polinomio.charAt(j)=='+'){
+                            i+=j-i;
+                            break;
+                        }
+
+                        aPasar += polinomio.charAt(j);
+                    }
+                    potenciaActual = Integer.parseInt(aPasar);
+                }else {
+                    potenciaActual=1;
+                }
             }
 
+            if (potenciaActual > mayorPotencia){
+                mayorPotencia = potenciaActual;
+            }
+            aPasar="";
+        }
 
-            if ((polinomio.charAt(i)==positivo||polinomio.charAt(i)==negativo)&& i>0){
-                comprovacionX=false;
-                polinomio1.append(polinomio.charAt(i));
-            }else if (polinomio.charAt(i)==negativo && i==0){
-                comprovacionX=false;
-                polinomio1.append(polinomio.charAt(i));
 
+
+        // Creamos el array del objeto con la longitud que le toca
+        this.coeficientes=new float[mayorPotencia+1];
+
+
+
+        String monomio="";
+        for (int i = 0; i <polinomio.length() ; i++) {
+
+
+
+            if ((polinomio.charAt(i)=='-'||polinomio.charAt(i)=='+') &&i>0){
+                funcion(monomio);
+                monomio="";
+            }
+
+            monomio=monomio+polinomio.charAt(i);
+            if (i+1>=polinomio.length()){
+                funcion(monomio);
+                monomio="";
             }
         }
 
 
-        System.out.println(polinomio1 );
 
 
-        // Esta bien
-        String stringAdevolver="";
-        contador = 0;
-        int multiplicador=1;
-        positivo='+';
-        negativo='-';
-        for (int i = 0; i < polinomio1.length(); i++) {
-            if ((polinomio1.charAt(i)==positivo||polinomio1.charAt(i)==negativo)&& i>0){
-                coeficientes[contador]= (Float.parseFloat(stringAdevolver)*multiplicador);
-                stringAdevolver="";
-                contador++;
-            }
-            if (polinomio1.charAt(i)==positivo){
-                multiplicador=1;
-            }else if (polinomio1.charAt(i)==negativo){
-                multiplicador=-1;
-            }
-            if (polinomio1.charAt(i)!= positivo && polinomio1.charAt(i)!=negativo){
-                stringAdevolver= stringAdevolver + polinomio1.charAt(i);
-            }
-        }
-        coeficientes[contador]= (Float.parseFloat(stringAdevolver))*multiplicador;
 
-
-        System.out.println("Desordenados\n" +
-                Arrays.toString(coeficientes) + "\n" + Arrays.toString(potencia));
-
-        //Ordenamos los arrays con orden de las potencias
-        ordenarArrayDoble(potencia,coeficientes);
-
-        System.out.println("Ordenados\n" +
-                Arrays.toString(coeficientes) + "\n" + Arrays.toString(potencia));
-
-
-        this.coeficientes = new float[potencia[potencia.length-1]+1];
-
-        System.out.println(this.coeficientes.length);
 
 
 
@@ -366,43 +285,57 @@ public class Polynomial {
 
 
 
-    public static void ordenarArrayDoble(int[] arrayPotencias, double[]arrayCoeficientes) {
+    private void funcion(String monomio){
 
-        for (int i=arrayPotencias.length, x=0; i>x; i--, x++) {
+        boolean simbolo=true; // TRUE POSITIVO ---- FALSE NEGATIVO
+
+        int potencia=0;
+        float coeficiente=0;
+
+        if (monomio.charAt(0)=='-'){
+            simbolo=false;
+        }
+
+        if (monomio.contains("x")){
+
+            if (monomio.contains("^")){
 
 
-            for (int j = 1; j < i; j++) {
-                if (arrayPotencias[j - 1] > arrayPotencias[j]) {
-                    int Swap1 = arrayPotencias[j];
-                    double Swap2 = arrayCoeficientes[j];
+            }else {
+                potencia=1;
 
-                    arrayPotencias[j] = arrayPotencias[j - 1];
-                    arrayCoeficientes[j]=arrayCoeficientes[j-1];
 
-                    arrayPotencias[j - 1] = Swap1;
-                    arrayCoeficientes[j-1]=Swap2;
-                }
             }
 
 
-            for (int k = (i-1) ; k > x ; k--) {
-                if (arrayPotencias[k-1] > arrayPotencias[k]){
-                    int Swap3 = arrayPotencias[k];
-                    double Swap4 = arrayCoeficientes[k];
 
-                    arrayPotencias[k] = arrayPotencias[k-1];
-                    arrayCoeficientes[k]=arrayCoeficientes[k-1];
+        }else {
 
-                    arrayPotencias[k-1] = Swap3;
-                    arrayCoeficientes[k-1]=Swap4;
+            potencia=0;
+            if (monomio.charAt(0)!='-' && monomio.charAt(0)!='+'){
+                coeficiente= Float.parseFloat(monomio);
+            }else {
+                String monomio2="";
+                for (int i = 1; i < monomio.length(); i++) {
+                    monomio2= monomio2+monomio.charAt(i);
                 }
+                coeficiente=Float.parseFloat(monomio2);
             }
 
         }
 
+        //multiplicacion del simbolo
+        if (!simbolo){
+            coeficiente=coeficiente*(-1);
+        }
+
+        System.out.println(monomio);
+
+
+        this.coeficientes[potencia]+=coeficiente;
+
+
     }
-
-
 
 }
 
@@ -410,7 +343,7 @@ public class Polynomial {
 class main{
     public static void main(String[] args) {
 
-        Polynomial p = new Polynomial("-4x^4+4-456x^90+5x-6x^3-3");
+        Polynomial p = new Polynomial("6 + 5x -4 + 6x^2");
 
 
 
