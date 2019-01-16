@@ -192,10 +192,19 @@ public class Polynomial {
         coeficientes[contador]= (Float.parseFloat(stringAdevolver))*multiplicador;
 
 
+        System.out.println("Desordenados\n" +
+                Arrays.toString(coeficientes) + "\n" + Arrays.toString(potencia));
+
+        //Ordenamos los arrays con orden de las potencias
+        ordenarArrayDoble(potencia,coeficientes);
+
+        System.out.println("Ordenados\n" +
+                Arrays.toString(coeficientes) + "\n" + Arrays.toString(potencia));
 
 
+        this.coeficientes = new float[potencia[potencia.length-1]+1];
 
-
+        System.out.println(this.coeficientes.length);
 
 
 
@@ -357,7 +366,41 @@ public class Polynomial {
 
 
 
+    public static void ordenarArrayDoble(int[] arrayPotencias, double[]arrayCoeficientes) {
 
+        for (int i=arrayPotencias.length, x=0; i>x; i--, x++) {
+
+
+            for (int j = 1; j < i; j++) {
+                if (arrayPotencias[j - 1] > arrayPotencias[j]) {
+                    int Swap1 = arrayPotencias[j];
+                    double Swap2 = arrayCoeficientes[j];
+
+                    arrayPotencias[j] = arrayPotencias[j - 1];
+                    arrayCoeficientes[j]=arrayCoeficientes[j-1];
+
+                    arrayPotencias[j - 1] = Swap1;
+                    arrayCoeficientes[j-1]=Swap2;
+                }
+            }
+
+
+            for (int k = (i-1) ; k > x ; k--) {
+                if (arrayPotencias[k-1] > arrayPotencias[k]){
+                    int Swap3 = arrayPotencias[k];
+                    double Swap4 = arrayCoeficientes[k];
+
+                    arrayPotencias[k] = arrayPotencias[k-1];
+                    arrayCoeficientes[k]=arrayCoeficientes[k-1];
+
+                    arrayPotencias[k-1] = Swap3;
+                    arrayCoeficientes[k-1]=Swap4;
+                }
+            }
+
+        }
+
+    }
 
 
 
