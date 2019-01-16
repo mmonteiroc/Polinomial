@@ -8,11 +8,6 @@ public class Polynomial {
     private float[] coeficientes;
 
 
-
-
-
-
-
     // Constructor per defecte. Genera un polinomi zero
     public Polynomial() {
         coeficientes = new float[1];
@@ -51,6 +46,11 @@ public class Polynomial {
 
     // Constructor a partir d'un string
     public Polynomial(String s) {
+
+        if (s.length()==1||(s.length()==2 && (s.charAt(0)=='-'||s.charAt(0)=='+'))){
+            this.coeficientes=new float[1];
+            this.coeficientes[0]=Float.parseFloat(s);
+        }
 
 
         // Rutina que elimina espacios
@@ -121,8 +121,21 @@ public class Polynomial {
         }
 
 
+        invertirArray();
+        System.out.println(Arrays.toString(this.coeficientes));
 
 
+
+
+
+        for (int i = 0; i < this.coeficientes.length; i++) {
+
+            if (this.coeficientes[i]!=0){
+                return;
+            }
+        }
+        this.coeficientes=new float[1];
+        this.coeficientes[0]=0;
 
 
 
@@ -132,11 +145,39 @@ public class Polynomial {
     // Suma el polinomi amb un altre. No modifica el polinomi actual (this). Genera un de nou
     public Polynomial add(Polynomial p) {
 
+        float[] mayor;
+        float[] menor;
+        if (this.coeficientes.length > p.coeficientes.length){
+            mayor=this.coeficientes;
+            menor=p.coeficientes;
+        }else {
+            mayor=p.coeficientes;
+            menor=this.coeficientes;
+        }
+
+
+        float[] c = new float[mayor.length];
+
+        mayor = invertirArray(mayor);
+        menor = invertirArray(menor);
+
+
+        for (int i = 0; i < c.length; i++) {
+            if (i>=menor.length){
+                c[i]=mayor[i];
+            }else {
+                c[i]=mayor[i]+menor[i];
+            }
+        }
+
+        c= invertirArray(c);
+        // Volvemos a poner los arrays en su orientacion correcta
+        mayor = invertirArray(mayor);
+        menor = invertirArray(menor);
 
 
 
-
-        return null;
+        return new Polynomial(c);
     }
 
     // Multiplica el polinomi amb un altre. No modifica el polinomi actual (this). Genera un de nou
@@ -262,9 +303,6 @@ public class Polynomial {
                 coef+= String.format(simbolo+" %.1f",coefActual);
             }
 
-            System.out.println(coef);
-
-
 
             if (elevacion==0){
                 devolver=  ""+coef;
@@ -286,7 +324,7 @@ public class Polynomial {
 
 
     private void funcion(String monomio){
-
+        String aPasar="";
         boolean simbolo=true; // TRUE POSITIVO ---- FALSE NEGATIVO
 
         int potencia=0;
@@ -301,13 +339,33 @@ public class Polynomial {
             if (monomio.contains("^")){
 
 
+                int i = monomio.length()-1;
+
+                while (true){
+
+                    if (monomio.charAt(i)=='^'){
+                        break;
+                    }
+                    aPasar= monomio.charAt(i) + aPasar;
+                    i--;
+                }
+
+                potencia = Integer.parseInt(aPasar);
+
+                aPasar="";
             }else {
                 potencia=1;
 
 
             }
+            int i =0;
+            while (true){
+                if (monomio.charAt(i)=='x') break;
+                aPasar=aPasar+monomio.charAt(i);
+                i++;
+            }
 
-
+            coeficiente= Float.parseFloat(aPasar);
 
         }else {
 
@@ -329,7 +387,6 @@ public class Polynomial {
             coeficiente=coeficiente*(-1);
         }
 
-        System.out.println(monomio);
 
 
         this.coeficientes[potencia]+=coeficiente;
@@ -337,15 +394,44 @@ public class Polynomial {
 
     }
 
+
+
+    private float[] invertirArray(float coeficientes[]){
+        for (int i = 0, j=coeficientes.length-1; i < j; i++,j--) {
+
+            float swap;
+            swap=coeficientes[i];
+            coeficientes[i]=coeficientes[j];
+            coeficientes[j]=swap;
+
+        }
+        return coeficientes;
+    }
+
+    private void invertirArray(){
+        for (int i = 0, j=this.coeficientes.length-1; i < j; i++,j--) {
+            float swap;
+            swap=this.coeficientes[i];
+            this.coeficientes[i]=this.coeficientes[j];
+            this.coeficientes[j]=swap;
+        }
+    }
+
+
 }
 
 
 class main{
     public static void main(String[] args) {
 
-        Polynomial p = new Polynomial("6 + 5x -4 + 6x^2");
+        Polynomial p = new Polynomial("3x^2 + 5");
+        Polynomial p1 = new Polynomial("3x-3");
+        Polynomial p2 = new Polynomial();
+        p2 = p.add(p1);
 
-
+        System.out.println(p2.toString());
 
     }
+
+
 }
