@@ -50,6 +50,10 @@ public class Polynomial {
         if (s.length()==1||(s.length()==2 && (s.charAt(0)=='-'||s.charAt(0)=='+'))){
             this.coeficientes=new float[1];
             this.coeficientes[0]=Float.parseFloat(s);
+            return;
+        }
+        if (s.charAt(0)!='x'&&s.charAt(0)!='-'&&s.charAt(0)!='+'){
+            s = "+"+s;
         }
 
 
@@ -71,23 +75,29 @@ public class Polynomial {
         for (int i = 0; i < polinomio.length(); i++) {
 
             if (polinomio.charAt(i)=='x'){
-                if (polinomio.charAt(i+1)=='^'){
 
-
-                    //Este bucle lo que hace es que te convierte numeros de mas de dos digitos a integer
-                    for (int j = i+2; j < polinomio.length(); j++) {
-
-                        if (polinomio.charAt(j)=='-' || polinomio.charAt(j)=='+'){
-                            i+=j-i;
-                            break;
-                        }
-
-                        aPasar += polinomio.charAt(j);
-                    }
-                    potenciaActual = Integer.parseInt(aPasar);
-                }else {
+                if  (i+1>=polinomio.length()){
                     potenciaActual=1;
+                }else {
+                    if (polinomio.charAt(i+1)=='^' ){
+
+
+                        //Este bucle lo que hace es que te convierte numeros de mas de dos digitos a integer
+                        for (int j = i+2; j < polinomio.length(); j++) {
+
+                            if (polinomio.charAt(j)=='-' || polinomio.charAt(j)=='+'){
+                                i+=j-i;
+                                break;
+                            }
+
+                            aPasar += polinomio.charAt(j);
+                        }
+                        potenciaActual = Integer.parseInt(aPasar);
+                    }else {
+                        potenciaActual=1;
+                    }
                 }
+
             }
 
             if (potenciaActual > mayorPotencia){
@@ -358,7 +368,7 @@ public class Polynomial {
 
 
             }
-            int i =0;
+            int i =1;
             while (true){
                 if (monomio.charAt(i)=='x') break;
                 aPasar=aPasar+monomio.charAt(i);
@@ -424,11 +434,11 @@ public class Polynomial {
 class main{
     public static void main(String[] args) {
 
-        Polynomial p = new Polynomial("3x^2 + 5");
-        Polynomial p1 = new Polynomial("3x-3");
-        Polynomial p2 = new Polynomial();
-        p2 = p.add(p1);
+        Polynomial p = new Polynomial("+3x^2 + 5");
+        Polynomial p1 = new Polynomial("-4x^10+45x^4+5 -4x-3x-3");
+        Polynomial p2;
 
+        p2 = p.add(p1);
         System.out.println(p2.toString());
 
     }
