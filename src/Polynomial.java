@@ -1,5 +1,5 @@
-import sun.awt.X11.XColor;
 
+import java.lang.management.PlatformLoggingMXBean;
 import java.util.Arrays;
 
 public class Polynomial {
@@ -49,7 +49,12 @@ public class Polynomial {
 
         if (s.length()==1||(s.length()==2 && (s.charAt(0)=='-'||s.charAt(0)=='+'))){
             this.coeficientes=new float[1];
-            this.coeficientes[0]=Float.parseFloat(s);
+            if (s.charAt(0)=='x'){
+                this.coeficientes[0]=1;
+            }else {
+
+                this.coeficientes[0]=Float.parseFloat(s);
+            }
             return;
         }
         if (s.charAt(0)!='x'&&s.charAt(0)!='-'&&s.charAt(0)!='+'){
@@ -65,47 +70,7 @@ public class Polynomial {
             }
         }
 
-
-        int mayorPotencia = 0;
-        int potenciaActual=0;
-
-        String aPasar="";
-
-        // Encotrnamos la mayor potencia de todo el polinomo
-        for (int i = 0; i < polinomio.length(); i++) {
-
-            if (polinomio.charAt(i)=='x'){
-
-                if  (i+1>=polinomio.length()){
-                    potenciaActual=1;
-                }else {
-                    if (polinomio.charAt(i+1)=='^' ){
-
-
-                        //Este bucle lo que hace es que te convierte numeros de mas de dos digitos a integer
-                        for (int j = i+2; j < polinomio.length(); j++) {
-
-                            if (polinomio.charAt(j)=='-' || polinomio.charAt(j)=='+'){
-                                i+=j-i;
-                                break;
-                            }
-
-                            aPasar += polinomio.charAt(j);
-                        }
-                        potenciaActual = Integer.parseInt(aPasar);
-                    }else {
-                        potenciaActual=1;
-                    }
-                }
-
-            }
-
-            if (potenciaActual > mayorPotencia){
-                mayorPotencia = potenciaActual;
-            }
-            aPasar="";
-        }
-
+        int mayorPotencia = buscarMayorPotencia(polinomio.toString());
 
 
         // Creamos el array del objeto con la longitud que le toca
@@ -232,13 +197,63 @@ public class Polynomial {
     // Multiplica el polinomi amb un altre. No modifica el polinomi actual (this). Genera un de nou
     public Polynomial mult(Polynomial p2) {
 
+        int mayorPotencia1 = this.coeficientes.length-1;
+        int mayorPotencia2 = p2.coeficientes.length-1;
+        int longitud = mayorPotencia1+mayorPotencia2;
+
+
+        float[] array ;
+        if (mayorPotencia1 > mayorPotencia2){
+            array = multiplicar(p2.coeficientes,this.coeficientes,longitud);
+        }else {
+            array = multiplicar(this.coeficientes,p2.coeficientes,longitud);
+        }
 
 
 
 
+        Polynomial aDevolver = new Polynomial(array);
 
-        return null;
+        return new Polynomial(array);
     }
+
+
+    private float[] multiplicar(float[] coef1, float[] coef2, int longitud){
+        float[] array = new float[longitud+1];
+
+
+        //invertimos los arrays
+        coef1 = invertirArray(coef1);
+        coef2 = invertirArray(coef2);
+
+        for (int i = 0; i < coef1.length; i++) {
+
+            for (int j = 0; j < coef2.length; j++) {
+            array[i+j]+=coef1[i]*coef2[j];
+            }
+
+        }
+
+        array = invertirArray(array);
+        return array;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // Divideix el polinomi amb un altre. No modifica el polinomi actual (this). Genera un de nou
     // Torna el quocient i també el residu (ambdós polinomis)
@@ -486,6 +501,57 @@ public class Polynomial {
 
 
 
+
+    private int buscarMayorPotencia(String polinomio){
+        int mayorPotencia = 0;
+        int potenciaActual=0;
+
+        String aPasar="";
+
+        // Encotrnamos la mayor potencia de todo el polinomo
+        for (int i = 0; i < polinomio.length(); i++) {
+
+            if (polinomio.charAt(i)=='x'){
+
+                if  (i+1>=polinomio.length()){
+                    potenciaActual=1;
+                }else {
+                    if (polinomio.charAt(i+1)=='^' ){
+
+
+                        //Este bucle lo que hace es que te convierte numeros de mas de dos digitos a integer
+                        for (int j = i+2; j < polinomio.length(); j++) {
+
+                            if (polinomio.charAt(j)=='-' || polinomio.charAt(j)=='+'){
+                                i+=j-i;
+                                break;
+                            }
+
+                            aPasar += polinomio.charAt(j);
+                        }
+                        potenciaActual = Integer.parseInt(aPasar);
+                    }else {
+                        potenciaActual=1;
+                    }
+                }
+
+            }
+
+            if (potenciaActual > mayorPotencia){
+                mayorPotencia = potenciaActual;
+            }
+            aPasar="";
+        }
+        return mayorPotencia;
+    }
+
+
+
+
+
+
+
+
     private float[] invertirArray(float coeficientes[]){
 
         //te devuelve una copia
@@ -521,45 +587,15 @@ public class Polynomial {
 class main{
     public static void main(String[] args) {
 
-        Polynomial p3;
         Polynomial p1;
         Polynomial p2;
 
-        p1 = new Polynomial("-2x");
-        p2 = new Polynomial("8x^7 + 5x");
-        p3 = new Polynomial("-x^2 + 12x - 5x^7");
-        //assertEquals("3x^7 - x^2 + 15x", p1.add(p2).add(p3).toString());
 
+        p1 = new Polynomial("x^4 - 6x^2 + 8");
+        p2 = new Polynomial("-6x^6 - 91x + 12");
+        //assertEquals("-6x^10 + 36x^8 - 48x^6 - 91x^5 + 12x^4 + 546x^3 - 72x^2 - 728x + 96", );
 
-        System.out.println("Primer test "+p1.add(p2).add(p3).toString());
-
-
-        p1 = new Polynomial("2x^2 + 3x - 5");
-        p2 = new Polynomial("7x^2 + 10");
-        //assertEquals("9x^2 + 3x + 5", p1.add(p2).toString());
-        System.out.println("Segundo test "+p1.add(p2).toString());
-
-
-
-        p1 = new Polynomial("73x^8 + 3x^4");
-        p2 = new Polynomial("-x^2 + 10");
-        //assertEquals(new Polynomial("73x^8 + 3x^4 - x^2 + 10"), p1.add(p2));
-        System.out.println("Tercer test "+p1.add(p2).toString());
-
-
-        p1 = new Polynomial("-x^2 + 10");
-        p2 = new Polynomial("73x^8 + 3x^4");
-        //assertEquals("73x^8 + 3x^4 - x^2 + 10", p1.add(p2).toString());
-
-        System.out.println("Cuarto test "+p1.add(p2).toString());
-
-
-        p1 = new Polynomial("5x^2 + 2x + 10");
-        p2 = new Polynomial("8 - 7x^2 + 2x^2");
-        //assertEquals(new Polynomial("2x + 18"), p1.add(p2));
-
-        System.out.println("Quinto test "+ p1.add(p2).toString());
-
+        System.out.println(p1.mult(p2).toString());
     }
 
 

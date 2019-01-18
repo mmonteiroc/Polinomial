@@ -90,13 +90,16 @@ public class PolynomialTest {
     public void multiplicacions() {
         Polynomial p1, p2;
 
+
         p1 = new Polynomial("x^4 - 6x^2 + 8");
         p2 = new Polynomial("-6x^6 - 91x + 12");
         assertEquals("-6x^10 + 36x^8 - 48x^6 - 91x^5 + 12x^4 + 546x^3 - 72x^2 - 728x + 96", p1.mult(p2).toString());
 
+
         p1 = new Polynomial("x");
         p2 = new Polynomial("x");
         assertEquals(new Polynomial("x^2"), p1.mult(p2));
+
 
         p1 = new Polynomial("0");
         p2 = new Polynomial("x^4 - 7x + 9");
