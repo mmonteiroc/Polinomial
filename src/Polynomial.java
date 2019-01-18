@@ -37,8 +37,8 @@ public class Polynomial {
             this.coeficientes[0]=0;
         }else {
             this.coeficientes=new float[coeficientes.length-x];
-            for (int i = x; i < coeficientes.length; i++) {
-                this.coeficientes[i] = coeficientes[i];
+            for (int i = 0, j=x; i < this.coeficientes.length; i++, j++) {
+                this.coeficientes[i] = coeficientes[j];
             }
         }
 
@@ -137,6 +137,43 @@ public class Polynomial {
 
 
 
+        if (this.coeficientes.length>1){
+
+            //Comprovacion fallo 0 a la izq
+            int comp=0;
+            while (true) {
+                if (this.coeficientes[comp]==0){
+                    if (comp+1==this.coeficientes.length){
+                        this.coeficientes=new float[1];
+                        this.coeficientes[0]=0;
+                        return;
+                    }
+
+                    comp++;
+                    continue;
+
+                }else {
+                    break;
+                }
+            }
+
+            if (comp!=0){
+                int longi =this.coeficientes.length;
+
+                float[] copia = new float[longi];
+                for (int i = 0; i < longi; i++) {
+                    copia[i]=this.coeficientes[i];
+                }
+
+                this.coeficientes = new float[longi-comp];
+                for (int i = 0; i < this.coeficientes.length; i++) {
+                    this.coeficientes[i]=copia[comp];
+                    comp++;
+                }
+            }
+
+        }
+
 
         for (int i = 0; i < this.coeficientes.length; i++) {
 
@@ -146,6 +183,8 @@ public class Polynomial {
         }
         this.coeficientes=new float[1];
         this.coeficientes[0]=0;
+
+
 
 
 
@@ -295,7 +334,7 @@ public class Polynomial {
 
                 }else{
                     //Todas las demas posiciones iran con X y con ^ donde la potencia sera la I
-                    if (cof1==1){
+                    if (cof1==1||cof1==-1){
                         devolver ="x^" + i + devolver;
                     }else {
                             devolver = cof1 + "x^" + i + devolver;
@@ -344,7 +383,7 @@ public class Polynomial {
             if (i+1 != coeficientesInvertidos.length){
                 devolver = " "+simbolo+" "+devolver;
             }else if (simbolo.equals("-")){
-                devolver = " "+simbolo+""+devolver;
+                devolver = simbolo+""+devolver;
             }
 
 
@@ -413,6 +452,9 @@ public class Polynomial {
                 i++;
             }
 
+            if  (aPasar.equals("")){
+                aPasar=""+1;
+            }
             coeficiente= Float.parseFloat(aPasar);
 
         }else {
@@ -479,12 +521,44 @@ public class Polynomial {
 class main{
     public static void main(String[] args) {
 
-        Polynomial p = new Polynomial("+3x^2 + 5");
-        Polynomial p1 = new Polynomial("4x^10+45x^4+5 -4x-3x-3");
+        Polynomial p3;
+        Polynomial p1;
         Polynomial p2;
 
-        p2 = p.add(p1);
-        System.out.println(p2.toString());
+        p1 = new Polynomial("-2x");
+        p2 = new Polynomial("8x^7 + 5x");
+        p3 = new Polynomial("-x^2 + 12x - 5x^7");
+        //assertEquals("3x^7 - x^2 + 15x", p1.add(p2).add(p3).toString());
+
+
+        System.out.println("Primer test "+p1.add(p2).add(p3).toString());
+
+
+        p1 = new Polynomial("2x^2 + 3x - 5");
+        p2 = new Polynomial("7x^2 + 10");
+        //assertEquals("9x^2 + 3x + 5", p1.add(p2).toString());
+        System.out.println("Segundo test "+p1.add(p2).toString());
+
+
+
+        p1 = new Polynomial("73x^8 + 3x^4");
+        p2 = new Polynomial("-x^2 + 10");
+        //assertEquals(new Polynomial("73x^8 + 3x^4 - x^2 + 10"), p1.add(p2));
+        System.out.println("Tercer test "+p1.add(p2).toString());
+
+
+        p1 = new Polynomial("-x^2 + 10");
+        p2 = new Polynomial("73x^8 + 3x^4");
+        //assertEquals("73x^8 + 3x^4 - x^2 + 10", p1.add(p2).toString());
+
+        System.out.println("Cuarto test "+p1.add(p2).toString());
+
+
+        p1 = new Polynomial("5x^2 + 2x + 10");
+        p2 = new Polynomial("8 - 7x^2 + 2x^2");
+        //assertEquals(new Polynomial("2x + 18"), p1.add(p2));
+
+        System.out.println("Quinto test "+ p1.add(p2).toString());
 
     }
 
