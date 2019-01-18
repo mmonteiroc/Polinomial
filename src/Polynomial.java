@@ -245,89 +245,127 @@ public class Polynomial {
     // Torna la representació en forma de String del polinomi. Override d'un mètode de la classe Object
     @Override
     public String toString() {
-        String devolver = "";
-        int elevacion = 0;
-        String simbolo = "";
-        String coef = "";
-        String devolver1="";
-
-        if (coeficientes.length==1){
-            int cofi1=(int) coeficientes[0];
-            double cofi2= coeficientes[0];
-
-            if (cofi1==cofi2){
-                 devolver1 = String.format("%.0f", coeficientes[0]);
-            }else {
-                 devolver1 = String.format("%.1f", coeficientes[0]);
-            }
-            return devolver1;
+        if (coeficientes.length==1 && coeficientes[0]==0){
+            return "0";
         }
-        for (int i = this.coeficientes.length-1; i>=0 ; i--) {
 
-            if (this.coeficientes[i]==0){
-                simbolo="";
-                elevacion++;
+        String devolver = "";
+
+        float[] coeficientesInvertidos = invertirArray(this.coeficientes);
+
+
+        String simbolo="";
+        int potencia=0;
+        int cof1=0;
+        float cof2=0;
+
+        for (int i = 0; i < coeficientesInvertidos.length; i++) {
+
+            cof1 = (int) coeficientesInvertidos[i];
+            cof2 = coeficientesInvertidos[i];
+
+            if (coeficientesInvertidos[i]==0){
                 continue;
             }
-
-
-            double coefActual = coeficientes[i];
-            int coefActual1 =(int) coefActual;
-
-            if (coefActual>=0){
+            if (coeficientesInvertidos[i]>=0){
                 simbolo="+";
             }else {
                 simbolo="-";
-
-                coefActual=coefActual*(-1);
-                coefActual1=coefActual1*(-1);
+                cof1 = (int) coeficientesInvertidos[i]*(-1);
+                cof2 = coeficientesInvertidos[i]*(-1);
             }
-            if (coefActual== coefActual1){
-                coef="";
 
+
+            if (cof1==cof2){
+                // SE USARA NUMEROS ENTEROS
                 if (i==0){
-                    if (coefActual1==1&&elevacion>0){
-                        if (simbolo.equals("+")){
+                    // Posicion 0 ira sin X
 
-                        }else {
-                            coef += simbolo;
-                        }
-                    }else {
-                        coef += simbolo+""+coefActual1;
-                    }
-                }else {
-                    if (coefActual1==1&&elevacion>0){
-                        if (simbolo.equals("+")){
+                    devolver = cof1 + devolver;
 
-                        }else {
-                            coef += simbolo;
-                        }
+
+                }else if (i==1){
+                    // Posicion 1 ira con X sin capellan
+
+                    if (cof1==1){
+                        devolver = "x" + devolver;
                     }else {
-                        coef += simbolo+" "+coefActual1;
+                        devolver = cof1 + "x" + devolver;
                     }
+
+                }else{
+                    //Todas las demas posiciones iran con X y con ^ donde la potencia sera la I
+                    if (cof1==1){
+                        devolver ="x^" + i + devolver;
+                    }else {
+                            devolver = cof1 + "x^" + i + devolver;
+                    }
+
                 }
 
+
             }else{
+                // SE USARA NUMEROS DECIMALES
 
-                coef="";
-                coef+= String.format(simbolo+" %.1f",coefActual);
+                if (i==0){
+                    // Posicion 0 ira sin X
+
+                    devolver = coeficientesInvertidos[i] + devolver;
+
+
+                }else if (i==1){
+                    // Posicion 1 ira con X sin capellan
+                    if (coeficientesInvertidos[i]==1){
+                        devolver = "x" + devolver;
+
+                    }else {
+                        devolver = coeficientesInvertidos[i] + "x" + devolver;
+                    }
+
+                }else{
+                    //Todas las demas posiciones iran con X y con ^ donde la potencia sera la I
+                    if (cof1==1){
+                        devolver ="x^" + i + devolver;
+                    }else {
+                        devolver = coeficientesInvertidos[i] + "x^" + i + devolver;
+                    }
+
+                }
+
             }
 
 
-            if (elevacion==0){
-                devolver=  ""+coef;
-            }else if(elevacion==1){
-                devolver= coef+"x"+" "+ devolver;
-            }else {
-                devolver= coef+"x^"+elevacion+" " + devolver;
+
+
+
+
+
+
+            if (i+1 != coeficientesInvertidos.length){
+                devolver = " "+simbolo+" "+devolver;
+            }else if (simbolo.equals("-")){
+                devolver = " "+simbolo+""+devolver;
             }
 
-            simbolo="";
-            elevacion++;
+
+
+
 
         }
+
+
+
+
+
+
+
+
+
         return devolver;
     }
+
+
+
 
 
 
@@ -407,15 +445,22 @@ public class Polynomial {
 
 
     private float[] invertirArray(float coeficientes[]){
-        for (int i = 0, j=coeficientes.length-1; i < j; i++,j--) {
+
+        //te devuelve una copia
+        float[] nuevoCoeficiente = new float[coeficientes.length];
+        for (int i = 0; i < coeficientes.length; i++) {
+            nuevoCoeficiente[i] = coeficientes[i];
+        }
+
+        for (int i = 0, j=nuevoCoeficiente.length-1; i < j; i++,j--) {
 
             float swap;
-            swap=coeficientes[i];
-            coeficientes[i]=coeficientes[j];
-            coeficientes[j]=swap;
+            swap=nuevoCoeficiente[i];
+            nuevoCoeficiente[i]=nuevoCoeficiente[j];
+            nuevoCoeficiente[j]=swap;
 
         }
-        return coeficientes;
+        return nuevoCoeficiente;
     }
 
     private void invertirArray(){
@@ -435,7 +480,7 @@ class main{
     public static void main(String[] args) {
 
         Polynomial p = new Polynomial("+3x^2 + 5");
-        Polynomial p1 = new Polynomial("-4x^10+45x^4+5 -4x-3x-3");
+        Polynomial p1 = new Polynomial("4x^10+45x^4+5 -4x-3x-3");
         Polynomial p2;
 
         p2 = p.add(p1);
