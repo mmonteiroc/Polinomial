@@ -1,5 +1,4 @@
 
-import java.lang.management.PlatformLoggingMXBean;
 import java.util.Arrays;
 
 public class Polynomial {
@@ -87,13 +86,13 @@ public class Polynomial {
 
 
             if ((polinomio.charAt(i)=='-'||polinomio.charAt(i)=='+') &&i>0){
-                funcion(monomio);
+                creacionMonomio(monomio);
                 monomio="";
             }
 
             monomio=monomio+polinomio.charAt(i);
             if (i+1>=polinomio.length()){
-                funcion(monomio);
+                creacionMonomio(monomio);
                 monomio="";
             }
         }
@@ -297,30 +296,29 @@ public class Polynomial {
     }
 
 
-
-
+    /**
+     * @return Devolvemos un polinomio en forma de string
+     *
+     * En esta funcion lo que hacemos es
+     *
+     *
+     */
     // Torna la representació en forma de String del polinomi. Override d'un mètode de la classe Object
     @Override
     public String toString() {
         if (coeficientes.length==1 && coeficientes[0]==0){
             return "0";
         }
-
         String devolver = "";
-
         float[] coeficientesInvertidos = invertirArray(this.coeficientes);
-
-
         String simbolo="";
         int potencia=0;
         int cof1=0;
         float cof2=0;
 
         for (int i = 0; i < coeficientesInvertidos.length; i++) {
-
             cof1 = (int) coeficientesInvertidos[i];
             cof2 = coeficientesInvertidos[i];
-
             if (coeficientesInvertidos[i]==0){
                 continue;
             }
@@ -332,24 +330,18 @@ public class Polynomial {
                 cof2 = coeficientesInvertidos[i]*(-1);
             }
 
-
-            if (cof1==cof2){
-                // SE USARA NUMEROS ENTEROS
+            if (cof1==cof2){// SE USARA NUMEROS ENTEROS
                 if (i==0){
                     // Posicion 0 ira sin X
 
                     devolver = cof1 + devolver;
-
-
                 }else if (i==1){
                     // Posicion 1 ira con X sin capellan
-
                     if (cof1==1){
                         devolver = "x" + devolver;
                     }else {
                         devolver = cof1 + "x" + devolver;
                     }
-
                 }else{
                     //Todas las demas posiciones iran con X y con ^ donde la potencia sera la I
                     if (cof1==1||cof1==-1){
@@ -357,19 +349,11 @@ public class Polynomial {
                     }else {
                             devolver = cof1 + "x^" + i + devolver;
                     }
-
                 }
-
-
-            }else{
-                // SE USARA NUMEROS DECIMALES
-
+            }else{// SE USARA NUMEROS DECIMALES
                 if (i==0){
                     // Posicion 0 ira sin X
-
                     devolver = coeficientesInvertidos[i] + devolver;
-
-
                 }else if (i==1){
                     // Posicion 1 ira con X sin capellan
                     if (coeficientesInvertidos[i]==1){
@@ -378,7 +362,6 @@ public class Polynomial {
                     }else {
                         devolver = coeficientesInvertidos[i] + "x" + devolver;
                     }
-
                 }else{
                     //Todas las demas posiciones iran con X y con ^ donde la potencia sera la I
                     if (cof1==1){
@@ -386,67 +369,44 @@ public class Polynomial {
                     }else {
                         devolver = coeficientesInvertidos[i] + "x^" + i + devolver;
                     }
-
                 }
-
             }
-
-
-
-
-
-
-
 
             if (i+1 != coeficientesInvertidos.length){
                 devolver = " "+simbolo+" "+devolver;
             }else if (simbolo.equals("-")){
                 devolver = simbolo+""+devolver;
             }
-
-
-
-
-
         }
-
-
-
-
-
-
-
-
-
         return devolver;
     }
 
 
 
 
-
-
-
-
-    private void funcion(String monomio){
+    /**
+     * @param monomio Recibimos una String la cual contiene un monomio
+     *
+     * Lo que hacemos es recibir un monomio, identificar cual es su potencia (sin incognita potencia = 0,
+     * con incognita potencia = 1, con incognita y potencia potencia=potencia)
+     *
+     * Despues de identificar la potencia, identificamos el coeficiente de ese monomio y lo añadimos al array de coeficientes en la posicion(potencia)
+     */
+    private void creacionMonomio(String monomio){
         String aPasar="";
         boolean simbolo=true; // TRUE POSITIVO ---- FALSE NEGATIVO
-
         int potencia=0;
         float coeficiente=0;
 
         if (monomio.charAt(0)=='-'){
+            // Definimos que el monomio es negativo
             simbolo=false;
         }
 
         if (monomio.contains("x")){
-
             if (monomio.contains("^")){
-
-
                 if (monomio.charAt(0)=='x'){
                     monomio= 1 + monomio;
-
                 }else if (monomio.charAt(0)=='-'&&monomio.charAt(1)=='x'){
                     String monomio2 ="";
                     for (int i = 0; i < monomio.length(); i++ ) {
@@ -454,24 +414,17 @@ public class Polynomial {
                             monomio2 = monomio2 + 1;
                         }
                             monomio2 = monomio2 + monomio.charAt(i);
-
                     }
                 }
-
-
                 int i = monomio.length()-1;
-
                 while (true){
-
                     if (monomio.charAt(i)=='^'){
                         break;
                     }
                     aPasar= monomio.charAt(i) + aPasar;
                     i--;
                 }
-
                 potencia = Integer.parseInt(aPasar);
-
                 aPasar="";
             }else {
                 potencia=1;
@@ -479,7 +432,7 @@ public class Polynomial {
 
             int i =1;
             if (i+1>=monomio.length()) {
-
+                // no hacemos nada
             }else{
                 while (true){
                     if (monomio.charAt(i)=='x') break;
@@ -497,9 +450,7 @@ public class Polynomial {
                 aPasar=""+(-1);
             }
             coeficiente= Float.parseFloat(aPasar);
-
         }else {
-
             potencia=0;
             if (monomio.charAt(0)!='-' && monomio.charAt(0)!='+'){
                 coeficiente= Float.parseFloat(monomio);
@@ -510,24 +461,25 @@ public class Polynomial {
                 }
                 coeficiente=Float.parseFloat(monomio2);
             }
-
         }
 
         //multiplicacion del simbolo
         if (!simbolo){
             coeficiente=coeficiente*(-1);
         }
-
-
-
         this.coeficientes[potencia]+=coeficiente;
-
-
     }
 
 
-
-
+    /**
+     * @param polinomio  Esta creacionMonomio recibe una String la cual contiene un polinomio
+     * @return devuelve un Int el cual es la mayor potencia de ese polinomio que le hemos pasado
+     *
+     * Lo que hace esya creacionMonomio es recorrer el polinomio, y va mirando monomio a monomio cual
+     * es su potencia y esa potencia actual la compara con la mayor potencia, en el case de que
+     * la actual sea mayor a la mayor, se reestablece la mayor por la actual y vuelve a empezar
+     * hasta que acabe el polinomio
+     */
     private int buscarMayorPotencia(String polinomio){
         int mayorPotencia = 0;
         int potenciaActual=0;
@@ -572,12 +524,10 @@ public class Polynomial {
     }
 
 
-
-
-
-
-
-
+    /**
+     * @param coeficientes Recibe un array de floats
+     * @return devuelve el mismo array que ha recibido pero invertido (IMPORTANTE, DEVUELVE UN NUEVO ARRAY, EL ORIGINAL NO SE MODIFICA)
+     */
     private float[] invertirArray(float coeficientes[]){
 
         //te devuelve una copia
@@ -597,6 +547,13 @@ public class Polynomial {
         return nuevoCoeficiente;
     }
 
+    /**
+     * Esta creacionMonomio lo que hace es al llamarla, invertimos
+     * el array de coeficientes del objeto desde el cual llamamos
+     * a esta creacionMonomio/metodo.
+     *
+     * No recibe ningun parametro ni devuelve ningun otro parametro
+     */
     private void invertirArray(){
         for (int i = 0, j=this.coeficientes.length-1; i < j; i++,j--) {
             float swap;
