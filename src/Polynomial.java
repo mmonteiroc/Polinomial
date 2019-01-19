@@ -203,7 +203,6 @@ public class Polynomial {
         int mayorPotencia2 = p2.coeficientes.length-1;
         int longitud = mayorPotencia1+mayorPotencia2;
 
-
         float[] array ;
         if (mayorPotencia1 > mayorPotencia2){
             array = multiplicar(p2.coeficientes,this.coeficientes,longitud);
@@ -211,49 +210,38 @@ public class Polynomial {
             array = multiplicar(this.coeficientes,p2.coeficientes,longitud);
         }
 
-
-
-
         Polynomial aDevolver = new Polynomial(array);
 
         return new Polynomial(array);
     }
 
 
+    /**
+     * @param coef1 Coeficientes del primero polinomio
+     * @param coef2 Coeficientes del segundo polinomio
+     * @param longitud es la longuitud que tendra que usar
+     * para crear el array del nuevo polinomio resultante de la multiplicación
+     * @return devuelve array el cual sera los coeficientes del resultado de la multiplicacion
+     *
+     * Este metodo recibe dos arrays de dos polinomios y lo que hace es ir recorriendo uno a
+     * uno los coeficientes del primer polinomio, y los va multiplicando con todos los coeficientes
+     * del segundo polinomio
+     */
     private float[] multiplicar(float[] coef1, float[] coef2, int longitud){
         float[] array = new float[longitud+1];
-
-
         //invertimos los arrays
         coef1 = invertirArray(coef1);
         coef2 = invertirArray(coef2);
 
         for (int i = 0; i < coef1.length; i++) {
-
             for (int j = 0; j < coef2.length; j++) {
             array[i+j]+=coef1[i]*coef2[j];
             }
 
         }
-
         array = invertirArray(array);
         return array;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -271,22 +259,18 @@ public class Polynomial {
 
     // Troba les arrels del polinomi, ordenades de menor a major
     public float[] roots() {
-
-
-
-
-
-
-
         return null;
     }
 
+    /**
+     * @param objeto donde objeto es otro polinomio
+     * @return devuelve true/false dependiendo si los dos polinomios son iguales o no
+     */
     // Torna "true" si els polinomis són iguals. Això és un override d'un mètode de la classe Object
     @Override
-    public boolean equals(Object o) {
-        Polynomial p1 = (Polynomial) o;
+    public boolean equals(Object objeto) {
+        Polynomial p1 = (Polynomial) objeto;
         if (p1.coeficientes.length != this.coeficientes.length)return false;
-
         for (int i = 0; i < this.coeficientes.length; i++) {
             if (this.coeficientes[i]!=p1.coeficientes[i]){
                 return false;
@@ -299,8 +283,14 @@ public class Polynomial {
     /**
      * @return Devolvemos un polinomio en forma de string
      *
-     * En esta funcion lo que hacemos es
+     * En esta funcion lo que hacemos es leer posicion a
+     * posicion del array Coeficientes de ese polinomio, y
+     * la vamos añadiendo con sus respectivas x si le pertañen y
+     * sus respectivas potencias
      *
+     * Ejemplos:
+     * [3,-2,0] --> 3x² -2x
+     * [4,-1,0,11] --> 4x³ - x² + 11
      *
      */
     // Torna la representació en forma de String del polinomi. Override d'un mètode de la classe Object
