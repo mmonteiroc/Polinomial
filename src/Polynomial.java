@@ -50,7 +50,10 @@ public class Polynomial {
         if (s.length()==1||(s.length()==2 && (s.charAt(0)=='-'||s.charAt(0)=='+'))){
             this.coeficientes=new float[1];
             if (s.charAt(0)=='x'){
+                this.coeficientes= new float[2];
                 this.coeficientes[0]=1;
+                this.coeficientes[1]=0;
+
             }else {
 
                 this.coeficientes[0]=Float.parseFloat(s);
@@ -441,6 +444,21 @@ public class Polynomial {
             if (monomio.contains("^")){
 
 
+                if (monomio.charAt(0)=='x'){
+                    monomio= 1 + monomio;
+
+                }else if (monomio.charAt(0)=='-'&&monomio.charAt(1)=='x'){
+                    String monomio2 ="";
+                    for (int i = 0; i < monomio.length(); i++ ) {
+                        if (i==1){
+                            monomio2 = monomio2 + 1;
+                        }
+                            monomio2 = monomio2 + monomio.charAt(i);
+
+                    }
+                }
+
+
                 int i = monomio.length()-1;
 
                 while (true){
@@ -457,18 +475,26 @@ public class Polynomial {
                 aPasar="";
             }else {
                 potencia=1;
-
-
             }
+
             int i =1;
-            while (true){
-                if (monomio.charAt(i)=='x') break;
-                aPasar=aPasar+monomio.charAt(i);
-                i++;
+            if (i+1>=monomio.length()) {
+
+            }else{
+                while (true){
+                    if (monomio.charAt(i)=='x') break;
+                    aPasar=aPasar+monomio.charAt(i);
+                    if (i+1>=monomio.length()){
+                        break;
+                    }
+                    i++;
+                }
             }
 
             if  (aPasar.equals("")){
                 aPasar=""+1;
+            }else if(aPasar.equals("-")){
+                aPasar=""+(-1);
             }
             coeficiente= Float.parseFloat(aPasar);
 
