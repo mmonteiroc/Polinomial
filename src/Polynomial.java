@@ -1,43 +1,53 @@
-
 import java.util.Arrays;
 
 public class Polynomial {
-
     //Atributos
     private float[] coeficientes;
 
 
-    // Constructor per defecte. Genera un polinomi zero
+    /**
+     * Constructor per defecte. Genera un polinomi zero
+     */
     public Polynomial() {
         coeficientes = new float[1];
         coeficientes[0]=0;
     }
 
-    // Constructor a partir dels coeficients del polinomi en forma d'array
+    /**
+     * @param coeficientes
+     *
+     * Recibimos un array con todos los coeficientes, lo que haremos primero de
+     * todo es hacer una copa de ese array ya que asi si el original se modifica
+     * nosotros seguiremos con el que nos hayan pasado desde el principio
+     *
+     * Despues desde la izq iremos mirando los ceros que hay ya que los 0 a la izquierda no
+     * nos interesan y despues desde el primer numero por la izq que no sea 0 lo copiaremos
+     * a el array membre coeficientes
+     */
     public Polynomial(float[] coeficientes) {
-
         //Lo que hago aqui es crear un nuevo array para no referenciar al
         // que nos pasan ya que el usuario podria modificar ese array
         //entonces usaremos una copia
-
-
-        int x = 0;
+        float [] newCoeficientes = new float[coeficientes.length];
         for (int i = 0; i < coeficientes.length; i++) {
-            if (coeficientes[i]==0){
+            newCoeficientes[i]=coeficientes[i];
+        }
+        int x = 0;
+        for (int i = 0; i < newCoeficientes.length; i++) {
+            if (newCoeficientes[i]==0){
                 x++;
             }else {
                 break;
             }
         }
-
-        if (x==coeficientes.length){
+        if (x==newCoeficientes.length){
 
             this.coeficientes=new float[1];
             this.coeficientes[0]=0;
         }else {
-            this.coeficientes=new float[coeficientes.length-x];
+            this.coeficientes=new float[newCoeficientes.length-x];
             for (int i = 0, j=x; i < this.coeficientes.length; i++, j++) {
-                this.coeficientes[i] = coeficientes[j];
+                this.coeficientes[i] = newCoeficientes[j];
             }
         }
 
@@ -63,7 +73,6 @@ public class Polynomial {
             s = "+"+s;
         }
 
-
         // Rutina que elimina espacios
         StringBuilder polinomio = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
@@ -74,10 +83,8 @@ public class Polynomial {
 
         int mayorPotencia = buscarMayorPotencia(polinomio.toString());
 
-
         // Creamos el array del objeto con la longitud que le toca
         this.coeficientes=new float[mayorPotencia+1];
-
 
 
         String monomio="";
@@ -141,116 +148,85 @@ public class Polynomial {
 
         }
 
-
         for (int i = 0; i < this.coeficientes.length; i++) {
-
             if (this.coeficientes[i]!=0){
                 return;
             }
         }
         this.coeficientes=new float[1];
         this.coeficientes[0]=0;
-
-
-
-
-
-
-    }
-
-    // Suma el polinomi amb un altre. No modifica el polinomi actual (this). Genera un de nou
-    public Polynomial add(Polynomial p) {
-
-        float[] mayor;
-        float[] menor;
-        if (this.coeficientes.length > p.coeficientes.length){
-            mayor=this.coeficientes;
-            menor=p.coeficientes;
-        }else {
-            mayor=p.coeficientes;
-            menor=this.coeficientes;
-        }
-
-
-        float[] c = new float[mayor.length];
-
-        mayor = invertirArray(mayor);
-        menor = invertirArray(menor);
-
-
-        for (int i = 0; i < c.length; i++) {
-            if (i>=menor.length){
-                c[i]=mayor[i];
-            }else {
-                c[i]=mayor[i]+menor[i];
-            }
-        }
-
-        c= invertirArray(c);
-        // Volvemos a poner los arrays en su orientacion correcta
-        mayor = invertirArray(mayor);
-        menor = invertirArray(menor);
-
-
-
-        return new Polynomial(c);
-    }
-
-    // Multiplica el polinomi amb un altre. No modifica el polinomi actual (this). Genera un de nou
-    public Polynomial mult(Polynomial p2) {
-
-        int mayorPotencia1 = this.coeficientes.length-1;
-        int mayorPotencia2 = p2.coeficientes.length-1;
-        int longitud = mayorPotencia1+mayorPotencia2;
-
-        float[] array ;
-        if (mayorPotencia1 > mayorPotencia2){
-            array = multiplicar(p2.coeficientes,this.coeficientes,longitud);
-        }else {
-            array = multiplicar(this.coeficientes,p2.coeficientes,longitud);
-        }
-
-        Polynomial aDevolver = new Polynomial(array);
-
-        return new Polynomial(array);
     }
 
 
     /**
-     * @param coef1 Coeficientes del primero polinomio
-     * @param coef2 Coeficientes del segundo polinomio
-     * @param longitud es la longuitud que tendra que usar
-     * para crear el array del nuevo polinomio resultante de la multiplicación
-     * @return devuelve array el cual sera los coeficientes del resultado de la multiplicacion
+     * @param poligono recibimos dos poligonos (1 el que nos pasan y 2 el que pasamos llamando a el metodo)
+     * @return devolvemos un nuevo polinomo que es el resultado de la suma de los dos polinomios
      *
-     * Este metodo recibe dos arrays de dos polinomios y lo que hace es ir recorriendo uno a
-     * uno los coeficientes del primer polinomio, y los va multiplicando con todos los coeficientes
-     * del segundo polinomio
+     *
+     * Este metodo lo que hace es recibir 2 polinomios, 1 el que le pasamos y otro el que llamamos a ese polinomio.
+     * Primero identificamos cual de los dos tiene un mayor exponente y lo asignamos a mayor, el que es menor lo añadimos a menor.
+     * Despues invertimos los dos arrays de coeficientes que tenemos (mayor y menor) y lo que hacemos es ir recorriendo el array
+     * resultado el cual sera de la misma longitud que el mayor de los dos iniciales.
+     * i mientras que i sea menos que la longitud del menor, iremos sumando las dos posiciones i de cada array
+     * si i es mayor que la longitud del menor, lo que haremos sera simplemente añadir la posicion de i de mayor en la posicion de i de resultado
      */
-    private float[] multiplicar(float[] coef1, float[] coef2, int longitud){
-        float[] array = new float[longitud+1];
-        //invertimos los arrays
-        coef1 = invertirArray(coef1);
-        coef2 = invertirArray(coef2);
+    // Suma el polinomi amb un altre. No modifica el polinomi actual (this). Genera un de nou
+    public Polynomial add(Polynomial poligono) {
 
-        for (int i = 0; i < coef1.length; i++) {
-            for (int j = 0; j < coef2.length; j++) {
-            array[i+j]+=coef1[i]*coef2[j];
-            }
-
+        float[] mayor;
+        float[] menor;
+        if (this.coeficientes.length > poligono.coeficientes.length){
+            mayor=this.coeficientes;
+            menor=poligono.coeficientes;
+        }else {
+            mayor=poligono.coeficientes;
+            menor=this.coeficientes;
         }
-        array = invertirArray(array);
-        return array;
+
+        float[] resultado = new float[mayor.length];
+        mayor = invertirArray(mayor);
+        menor = invertirArray(menor);
+        for (int i = 0; i < resultado.length; i++) {
+            if (i>=menor.length){
+                resultado[i]=mayor[i];
+            }else {
+                resultado[i]=mayor[i]+menor[i];
+            }
+        }
+        resultado= invertirArray(resultado);
+        return new Polynomial(resultado);
     }
+
+
+    /**
+     * @param polinomio recibimos dos polinomios (1 el que pasamos por parametro y 2 el que pasamos llamando al metodo (this))
+     * @return devolvemos un nuevo polinomio que sera el resultado de la multiplicacion de los dos polinomios originales
+     *
+     * Esta funcion lo que hace es identificar las dos mayores potencias de cada polinomio (la longitud de cada uno - 1)
+     * lo que haremos sera dependiendo de cual sea mayor llamar a la funcion multiplicar de una o otra manera, esta funcion
+     * nos retornara el array de el resultado, con ese array llamaremos al constructor de polinomio lo retornaremos
+     *
+     */
+    // Multiplica el polinomi amb un altre. No modifica el polinomi actual (this). Genera un de nou
+    public Polynomial mult(Polynomial polinomio) {
+        int mayorPotencia1 = this.coeficientes.length-1, mayorPotencia2 = polinomio.coeficientes.length-1, longitud = mayorPotencia1+mayorPotencia2;
+
+        float[] array ;
+        if (mayorPotencia1 > mayorPotencia2){
+            array = multiplicar(polinomio.coeficientes,this.coeficientes,longitud);
+        }else {
+            array = multiplicar(this.coeficientes,polinomio.coeficientes,longitud);
+        }
+        return new Polynomial(array);
+    }
+
+
 
 
 
     // Divideix el polinomi amb un altre. No modifica el polinomi actual (this). Genera un de nou
     // Torna el quocient i també el residu (ambdós polinomis)
     public Polynomial[] div(Polynomial p2) {
-
-
-
 
 
 
@@ -261,6 +237,8 @@ public class Polynomial {
     public float[] roots() {
         return null;
     }
+
+
 
     /**
      * @param objeto donde objeto es otro polinomio
@@ -357,7 +335,11 @@ public class Polynomial {
                     if (cof1==1){
                         devolver ="x^" + i + devolver;
                     }else {
-                        devolver = coeficientesInvertidos[i] + "x^" + i + devolver;
+                        float num = coeficientesInvertidos[i];
+                        if (simbolo.equals("-")){
+                            num=num*(-1);
+                        }
+                        devolver = num+ "x^" + i + devolver;
                     }
                 }
             }
@@ -373,6 +355,37 @@ public class Polynomial {
 
 
 
+    //FUNCIONES QUE HE NECESITADO
+
+
+
+    /**
+     * @param coef1 Coeficientes del primero polinomio
+     * @param coef2 Coeficientes del segundo polinomio
+     * @param longitud es la longuitud que tendra que usar para crear el
+     *                 array del nuevo polinomio resultante de la
+     *                 multiplicación
+     * @return devuelve array el cual sera los coeficientes del resultado de la multiplicacion
+     *
+     * Este metodo recibe dos arrays de dos polinomios y lo que hace es ir recorriendo uno a
+     * uno los coeficientes del primer polinomio, y los va multiplicando con todos los coeficientes
+     * del segundo polinomio
+     */
+    private float[] multiplicar(float[] coef1, float[] coef2, int longitud){
+        float[] array = new float[longitud+1];
+        //invertimos los arrays
+        coef1 = invertirArray(coef1);
+        coef2 = invertirArray(coef2);
+
+        for (int i = 0; i < coef1.length; i++) {
+            for (int j = 0; j < coef2.length; j++) {
+                array[i+j]+=coef1[i]*coef2[j];
+            }
+
+        }
+        array = invertirArray(array);
+        return array;
+    }
 
     /**
      * @param monomio Recibimos una String la cual contiene un monomio
@@ -564,8 +577,8 @@ class main{
         Polynomial p2;
 
 
-        p1 = new Polynomial("x^4 - 6x^2 + 8");
-        p2 = new Polynomial("-6x^6 - 91x + 12");
+        p1 = new Polynomial("x^4 - 6.4x^2 + 8");
+        p2 = new Polynomial("-6x^3 + 5.6");
         //assertEquals("-6x^10 + 36x^8 - 48x^6 - 91x^5 + 12x^4 + 546x^3 - 72x^2 - 728x + 96", );
 
         System.out.println(p1.mult(p2).toString());
