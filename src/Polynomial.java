@@ -259,6 +259,7 @@ public class Polynomial {
         for (int i = dividendo.length-1; i >= divisor.length-1 ; i--) {
 
             double divisorx=0;
+            int x = 1;
             for (int j = divisor.length-1; j >= 0 ; j--) {
                 posicion=i-j;
 
@@ -272,12 +273,12 @@ public class Polynomial {
 
                 }else {
 
-                    posicion= i-1;
+                    posicion= i-x;
                     if (posicion<0){
                         posicion=0;
                     }
                     dividendo[posicion] += (float) ((divisor[j] * divisorx)*(-1));
-
+                    x++;
                 }
 
             }
@@ -285,9 +286,15 @@ public class Polynomial {
         }
 
 
+
+
         Polynomial [] polinomioa = new Polynomial[2];
         polinomioa[0] = new Polynomial(invertirArray(coeficientes));
         polinomioa[1] = new Polynomial(invertirArray(dividendo));
+        System.out.println("Coeficientes: " + Arrays.toString(invertirArray(coeficientes)));
+        System.out.println("Residuos: " + Arrays.toString(invertirArray(residuos)));
+
+
         return polinomioa;
     }
 
