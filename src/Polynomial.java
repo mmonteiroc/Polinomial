@@ -53,31 +53,37 @@ public class Polynomial {
 
     }
 
+    /**
+     * @param stringPolinomio  Recibimos un polinomio en formato de String (2x^3 - 4 + 5x^2 + 32)
+     *
+     *
+     *
+     */
     // Constructor a partir d'un string
-    public Polynomial(String s) {
+    public Polynomial(String stringPolinomio) {
 
-        if (s.length()==1||(s.length()==2 && (s.charAt(0)=='-'||s.charAt(0)=='+'))){
+        if (stringPolinomio.length()==1||(stringPolinomio.length()==2 && (stringPolinomio.charAt(0)=='-'||stringPolinomio.charAt(0)=='+'))){
             this.coeficientes=new float[1];
-            if (s.charAt(0)=='x'){
+            if (stringPolinomio.charAt(0)=='x'){
                 this.coeficientes= new float[2];
                 this.coeficientes[0]=1;
                 this.coeficientes[1]=0;
 
             }else {
 
-                this.coeficientes[0]=Float.parseFloat(s);
+                this.coeficientes[0]=Float.parseFloat(stringPolinomio);
             }
             return;
         }
-        if (s.charAt(0)!='x'&&s.charAt(0)!='-'&&s.charAt(0)!='+'){
-            s = "+"+s;
+        if (stringPolinomio.charAt(0)!='x'&&stringPolinomio.charAt(0)!='-'&&stringPolinomio.charAt(0)!='+'){
+            stringPolinomio = "+"+stringPolinomio;
         }
 
         // Rutina que elimina espacios
         StringBuilder polinomio = new StringBuilder();
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i)!=' '){
-                polinomio.append(s.charAt(i));
+        for (int i = 0; i < stringPolinomio.length(); i++) {
+            if (stringPolinomio.charAt(i)!=' '){
+                polinomio.append(stringPolinomio.charAt(i));
             }
         }
 
@@ -86,17 +92,14 @@ public class Polynomial {
         // Creamos el array del objeto con la longitud que le toca
         this.coeficientes=new float[mayorPotencia+1];
 
-
+        // Llamamos a la funcion que añade cada
+        // monomio en la posicion de coeficientes que le pertañe
         String monomio="";
         for (int i = 0; i <polinomio.length() ; i++) {
-
-
-
             if ((polinomio.charAt(i)=='-'||polinomio.charAt(i)=='+') &&i>0){
                 creacionMonomio(monomio);
                 monomio="";
             }
-
             monomio=monomio+polinomio.charAt(i);
             if (i+1>=polinomio.length()){
                 creacionMonomio(monomio);
@@ -104,19 +107,17 @@ public class Polynomial {
             }
         }
 
-
         invertirArray();
         System.out.println(Arrays.toString(this.coeficientes));
 
 
-
-
         if (this.coeficientes.length>1){
-
             //Comprovacion fallo 0 a la izq
             int comp=0;
             while (true) {
                 if (this.coeficientes[comp]==0){
+                    // Si es todo 0 lo que hacemos es restaurar
+                    //  el array y hacer que sea de longitud 1 con un 0
                     if (comp+1==this.coeficientes.length){
                         this.coeficientes=new float[1];
                         this.coeficientes[0]=0;
@@ -125,36 +126,27 @@ public class Polynomial {
 
                     comp++;
                     continue;
-
                 }else {
                     break;
                 }
             }
 
+            // Si hay algun 0 a la izq lo que
+            // hacemos es quitar esos 0 de la izquierda
             if (comp!=0){
                 int longi =this.coeficientes.length;
-
                 float[] copia = new float[longi];
+
                 for (int i = 0; i < longi; i++) {
                     copia[i]=this.coeficientes[i];
                 }
-
                 this.coeficientes = new float[longi-comp];
                 for (int i = 0; i < this.coeficientes.length; i++) {
                     this.coeficientes[i]=copia[comp];
                     comp++;
                 }
             }
-
         }
-
-        for (int i = 0; i < this.coeficientes.length; i++) {
-            if (this.coeficientes[i]!=0){
-                return;
-            }
-        }
-        this.coeficientes=new float[1];
-        this.coeficientes[0]=0;
     }
 
 
@@ -194,6 +186,9 @@ public class Polynomial {
             }
         }
         resultado= invertirArray(resultado);
+        // RESTABLECEMOS LOS ARRAYS DE COEFICIENTES ORIGINALES
+        mayor = invertirArray(mayor);
+        menor=invertirArray(menor);
         return new Polynomial(resultado);
     }
 
@@ -224,14 +219,100 @@ public class Polynomial {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     // Divideix el polinomi amb un altre. No modifica el polinomi actual (this). Genera un de nou
     // Torna el quocient i també el residu (ambdós polinomis)
     public Polynomial[] div(Polynomial p2) {
 
 
+        float[] dividendo = copiarArray(this.coeficientes);
+        float[] divisor = copiarArray(p2.coeficientes);
+        dividendo = invertirArray(dividendo);
+        divisor = invertirArray(divisor);
 
-        return null;
+        float[] residuos = new float[dividendo.length];
+
+        float[] coeficientes ;
+
+        if (dividendo.length> divisor.length){
+            coeficientes = new float[dividendo.length-1];
+        }else {
+            coeficientes = new float[divisor.length-1];
+        }
+
+
+
+        int posicion = 0;
+
+
+        for (int i = dividendo.length-1; i >= divisor.length-1 ; i--) {
+
+            double divisorx=0;
+            for (int j = divisor.length-1; j >= 0 ; j--) {
+                posicion=i-j;
+
+                if (j == divisor.length-1){
+                    if (posicion<0){
+                        posicion=0;
+                    }
+                    coeficientes[posicion] = dividendo[i]/divisor[j];
+                    divisorx = dividendo[i]/divisor[j];
+                    dividendo[i]=0;
+
+                }else {
+
+                    posicion= i-1;
+                    if (posicion<0){
+                        posicion=0;
+                    }
+                    dividendo[posicion] += (float) ((divisor[j] * divisorx)*(-1));
+
+                }
+
+            }
+
+        }
+
+
+        Polynomial [] polinomioa = new Polynomial[2];
+        polinomioa[0] = new Polynomial(invertirArray(coeficientes));
+        polinomioa[1] = new Polynomial(invertirArray(dividendo));
+        return polinomioa;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // Troba les arrels del polinomi, ordenades de menor a major
     public float[] roots() {
@@ -372,19 +453,18 @@ public class Polynomial {
      * del segundo polinomio
      */
     private float[] multiplicar(float[] coef1, float[] coef2, int longitud){
-        float[] array = new float[longitud+1];
+        float[] resultado = new float[longitud+1];
         //invertimos los arrays
         coef1 = invertirArray(coef1);
         coef2 = invertirArray(coef2);
 
         for (int i = 0; i < coef1.length; i++) {
             for (int j = 0; j < coef2.length; j++) {
-                array[i+j]+=coef1[i]*coef2[j];
+                resultado[i+j]+=coef1[i]*coef2[j];
             }
-
         }
-        array = invertirArray(array);
-        return array;
+        resultado = invertirArray(resultado);
+        return resultado;
     }
 
     /**
@@ -393,7 +473,8 @@ public class Polynomial {
      * Lo que hacemos es recibir un monomio, identificar cual es su potencia (sin incognita potencia = 0,
      * con incognita potencia = 1, con incognita y potencia potencia=potencia)
      *
-     * Despues de identificar la potencia, identificamos el coeficiente de ese monomio y lo añadimos al array de coeficientes en la posicion(potencia)
+     * Despues de identificar la potencia, identificamos el coeficiente de ese
+     * monomio y lo añadimos al array de coeficientes en la posicion(potencia)
      */
     private void creacionMonomio(String monomio){
         String aPasar="";
@@ -405,7 +486,6 @@ public class Polynomial {
             // Definimos que el monomio es negativo
             simbolo=false;
         }
-
         if (monomio.contains("x")){
             if (monomio.contains("^")){
                 if (monomio.charAt(0)=='x'){
@@ -478,10 +558,10 @@ public class Polynomial {
      * @param polinomio  Esta creacionMonomio recibe una String la cual contiene un polinomio
      * @return devuelve un Int el cual es la mayor potencia de ese polinomio que le hemos pasado
      *
+     * hasta que acabe el polinomio
      * Lo que hace esya creacionMonomio es recorrer el polinomio, y va mirando monomio a monomio cual
      * es su potencia y esa potencia actual la compara con la mayor potencia, en el case de que
      * la actual sea mayor a la mayor, se reestablece la mayor por la actual y vuelve a empezar
-     * hasta que acabe el polinomio
      */
     private int buscarMayorPotencia(String polinomio){
         int mayorPotencia = 0;
@@ -498,7 +578,6 @@ public class Polynomial {
                     potenciaActual=1;
                 }else {
                     if (polinomio.charAt(i+1)=='^' ){
-
 
                         //Este bucle lo que hace es que te convierte numeros de mas de dos digitos a integer
                         for (int j = i+2; j < polinomio.length(); j++) {
@@ -526,6 +605,14 @@ public class Polynomial {
         return mayorPotencia;
     }
 
+    // FUNCION QUE TE DEVUELVE UNA COPIA DE UN ARRAY QUE PASAMOS
+    private float[] copiarArray(float[] array){
+        float[]copia = new float[array.length];
+        for (int i = 0; i < array.length; i++) {
+            copia[i] = array[i];
+        }
+        return copia;
+    }
 
     /**
      * @param coeficientes Recibe un array de floats
@@ -534,10 +621,7 @@ public class Polynomial {
     private float[] invertirArray(float coeficientes[]){
 
         //te devuelve una copia
-        float[] nuevoCoeficiente = new float[coeficientes.length];
-        for (int i = 0; i < coeficientes.length; i++) {
-            nuevoCoeficiente[i] = coeficientes[i];
-        }
+        float[] nuevoCoeficiente = copiarArray(coeficientes);
 
         for (int i = 0, j=nuevoCoeficiente.length-1; i < j; i++,j--) {
 
@@ -577,12 +661,20 @@ class main{
         Polynomial p2;
 
 
-        p1 = new Polynomial("x^4 - 6.4x^2 + 8");
-        p2 = new Polynomial("-6x^3 + 5.6");
-        //assertEquals("-6x^10 + 36x^8 - 48x^6 - 91x^5 + 12x^4 + 546x^3 - 72x^2 - 728x + 96", );
+        p1 = new Polynomial("x^3 -3x +2");
+        p2 = new Polynomial("x+2");
 
-        System.out.println(p1.mult(p2).toString());
+        p1.div(p2);
+
+
+        p1 = new Polynomial("4x^5 - 2x^2 +8");
+        p2 = new Polynomial("x+2");
+
+
+        p1.div(p2);
+
+        System.out.println("Resultado = x^2 + 2x -7\n" +
+                "Residuo = + 16");
+
     }
-
-
 }
