@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Polynomial {
     //Atributos
@@ -221,94 +222,46 @@ public class Polynomial {
 
 
 
-
-
-
-
-
-
-
-
-
-
     // Divideix el polinomi amb un altre. No modifica el polinomi actual (this). Genera un de nou
     // Torna el quocient i també el residu (ambdós polinomis)
     public Polynomial[] div(Polynomial p2) {
-
 
         float[] dividendo = copiarArray(this.coeficientes);
         float[] divisor = copiarArray(p2.coeficientes);
         dividendo = invertirArray(dividendo);
         divisor = invertirArray(divisor);
 
-        float[] residuos = new float[dividendo.length];
+        float[] coeficientesDivision ;
+        coeficientesDivision = new float[dividendo.length-1];
 
-        float[] coeficientes ;
-
-        if (dividendo.length> divisor.length){
-            coeficientes = new float[dividendo.length-1];
-        }else {
-            coeficientes = new float[divisor.length-1];
-        }
-
-
-
-        int posicion = 0;
-
-
+        int posicion;
+        int x;
+        double divi;
         for (int i = dividendo.length-1; i >= divisor.length-1 ; i--) {
-
-            double divisorx=0;
-            int x = 1;
+            divi=0;
+            x = 1;
             for (int j = divisor.length-1; j >= 0 ; j--) {
                 posicion=i-j;
-
                 if (j == divisor.length-1){
                     if (posicion<0){
                         posicion=0;
                     }
-                    coeficientes[posicion] = dividendo[i]/divisor[j];
-                    divisorx = dividendo[i]/divisor[j];
+                    coeficientesDivision[posicion] = dividendo[i]/divisor[j];
+                    divi = dividendo[i]/divisor[j];
                     dividendo[i]=0;
-
                 }else {
-
                     posicion= i-x;
                     if (posicion<0){
                         posicion=0;
                     }
-                    dividendo[posicion] += (float) ((divisor[j] * divisorx)*(-1));
+                    dividendo[posicion] += (float) ((divisor[j] * divi)*(-1));
                     x++;
                 }
-
             }
-
         }
-
-
-
-
-        Polynomial [] polinomioa = new Polynomial[2];
-        polinomioa[0] = new Polynomial(invertirArray(coeficientes));
-        polinomioa[1] = new Polynomial(invertirArray(dividendo));
-        System.out.println("Coeficientes: " + Arrays.toString(invertirArray(coeficientes)));
-        System.out.println("Residuos: " + Arrays.toString(invertirArray(residuos)));
-
-
-        return polinomioa;
+        Polynomial [] polinomios = {new Polynomial(invertirArray(coeficientesDivision)),new Polynomial(invertirArray(dividendo))};
+        return polinomios;
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -323,8 +276,158 @@ public class Polynomial {
 
     // Troba les arrels del polinomi, ordenades de menor a major
     public float[] roots() {
-        return null;
+
+        float[] cofi = copiarArray(this.coeficientes);
+
+        float[] resultado = new float[1];
+        if (cofi.length==1){
+            //No hay solucion
+            return null;
+        }else if (cofi.length==2){
+
+            //Primer grado
+            resultado = new float[1];
+            resultado[0] = (cofi[1]*(-1))/cofi[0];
+            System.out.println(resultado[0]);
+
+        }else if (cofi.length==3){
+
+            //Segundo grado
+            float a = cofi[0];
+            float b = cofi[1];
+            float c = cofi[2];
+            float discriminante = b*b - 4*a*c;
+            if (discriminante < 0){
+                return null;
+            }
+            resultado = segundoGrado(cofi);
+        }else if (cofi.length == 5 && (cofi[1]==0 && cofi[3]==0)){
+            //Bicuadratica
+
+            //Segundo grado
+            float a = cofi[0];
+            float b = cofi[2];
+            float c = cofi[4];
+            float discriminante = b*b - 4*a*c;
+            if (discriminante < 0){
+                return null;
+            }
+            float[] cofi1 = new float[3];
+            cofi1[0]=cofi[0];
+            cofi1[1]=cofi[2];
+            cofi1[2]=cofi[4];
+            resultado =  segundoGrado(cofi1);
+            float[] resultado1 = new float[resultado.length*2];
+
+            for (int i = 0, j=0; i < resultado.length; i++, j++) {
+                resultado1[j] =(float) Math.sqrt(resultado[i]) ;
+                j++;
+                resultado1[j] = (float) Math.sqrt(resultado[i])*(-1) ;
+            }
+            resultado = resultado1;
+        }else{
+
+            //Todo es 0 excepto maximo exponente y termino independiente
+            int x =0;
+            for (int i = 0; i < cofi.length; i++) {
+                if (cofi[i]!=0)x++;
+            }
+            if (x==2 || (x==1 && cofi[cofi.length-1]==0)){
+
+
+                float a = cofi[0];
+                float b = cofi[cofi.length-1];
+
+
+
+                float discriminante = a/b;
+                int indice = cofi.length-1;
+                if (discriminante< 0 && ((cofi.length-1)%2 == 0)){
+                    return null;
+                }else if ((cofi.length-1)%2 == 0){
+                    // DOS SOLUCIONES
+
+                    resultado = new float[2];
+
+                    resultado[0] =(float) Math.pow(discriminante, 1/indice);
+                    resultado[1] = (float)Math.pow(discriminante, 1/indice)*(-1);
+
+                }else{
+                    // UNA SOLUCION
+                    resultado = new float[1];
+                    resultado[0] = (float)Math.pow(discriminante, 1/indice);
+                }
+
+
+            }
+
+
+
+
+        }
+
+
+
+
+        resultado = burbuja(resultado);
+        return resultado;
     }
+
+
+    private float[] segundoGrado(float[]cofi){
+        float a = cofi[0];
+        float b = cofi[1];
+        float c = cofi[2];
+        float[] dev = new float[0];
+
+        float discriminante = b*b - 4*a*c;
+        if (discriminante == 0){
+
+            float x =(float) (-b + Math.sqrt(discriminante))/(2*a);
+            System.out.println("Solo hay una solucion: " + x);
+            dev = new float[1];
+            dev[0]=x;
+            return dev;
+
+
+        }else {
+            float x1 =(float) (-b + Math.sqrt(discriminante))/(2*a);
+            float x2 =(float) (-b - Math.sqrt(discriminante))/(2*a);
+            //imprime los valores
+            System.out.println("La solucion de x1: " + x1);
+            System.out.println("La solucion de x2: " + x2);
+
+            dev = new float[2];
+            dev[0] = x1;
+            dev[1] = x2;
+        }
+
+        return dev;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -658,30 +761,43 @@ public class Polynomial {
     }
 
 
-}
+
+    private float[] burbuja(float[] ar){
+        float swap;
+        for (int j = ar.length; j > 0; j--) {
+            for (int i = 1; i < j; i++) {
+                if (ar[i - 1] > ar[i]) {
+                    swap = ar[i];
+                    ar[i] = ar[i - 1];
+                    ar[i - 1] = swap;
+                }
+            }
+        }
+        return ar;
+    }
 
 
-class main{
+
+
+
+
+
+
+
+
+
+
+
+
     public static void main(String[] args) {
+        Polynomial p1 ;
+        Polynomial p2 ;
+        Polynomial p3 ;
+        Polynomial p4 ;
 
-        Polynomial p1;
-        Polynomial p2;
+        p1 = new Polynomial("x - 9");
+        p1.roots();
 
-
-        p1 = new Polynomial("x^3 -3x +2");
-        p2 = new Polynomial("x+2");
-
-        p1.div(p2);
-
-
-        p1 = new Polynomial("4x^5 - 2x^2 +8");
-        p2 = new Polynomial("x+2");
-
-
-        p1.div(p2);
-
-        System.out.println("Resultado = x^2 + 2x -7\n" +
-                "Residuo = + 16");
 
     }
 }
