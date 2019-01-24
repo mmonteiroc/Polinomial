@@ -111,7 +111,6 @@ public class Polynomial {
         }
 
         invertirArray();
-        System.out.println(Arrays.toString(this.coeficientes));
 
 
         if (this.coeficientes.length>1){
@@ -269,16 +268,6 @@ public class Polynomial {
     }
 
 
-
-
-
-
-
-
-
-
-
-
     // Troba les arrels del polinomi, ordenades de menor a major
     public float[] roots() {
         float[] cofi = copiarArray(this.coeficientes);
@@ -295,9 +284,9 @@ public class Polynomial {
         }
 
 
+        float[] resultado = new float[0];
 
 
-        float[] resultado = new float[1];
         if (cofi.length==1){
             //No hay solucion
             return null;
@@ -306,7 +295,6 @@ public class Polynomial {
             //Primer grado
             resultado = new float[1];
             resultado[0] = (cofi[1]*(-1))/cofi[0];
-            System.out.println(resultado[0]);
 
         }else if (cofi.length==3){
 
@@ -326,8 +314,6 @@ public class Polynomial {
             float a = cofi[0];
             float b = cofi[cofi.length-1]*(-1);
 
-
-
             float discriminante = b/a;
             float indice = cofi.length-1;
             if (discriminante< 0 && (indice%2 == 0)){
@@ -336,7 +322,6 @@ public class Polynomial {
                 // DOS SOLUCIONES
 
                 resultado = new float[2];
-
                 resultado[0] =(float) Math.pow(discriminante, 1.0/indice);
                 resultado[1] = (float)Math.pow(discriminante, 1.0/indice)*(-1);
 
@@ -353,11 +338,6 @@ public class Polynomial {
                     resultado[0]=resultado[0]*(-1);
                 }
             }
-
-
-
-
-
 
         }else if (cofi.length == 5 && (cofi[1]==0 && cofi[3]==0)){
             //Bicuadratica
@@ -401,10 +381,17 @@ public class Polynomial {
             float[]ccopia=new float[0];
             while (ii>0){
 
+                int z=0;
+                for (int i = 0; i <c.length ; i++) {
+
+                    if (c[i]==0)z++;
+
+                }
+                if (z==c.length){
+                    break;
+                }
 
                 float indepe = c[c.length-1];
-
-
                 if (comprovar(divisor)){
                     if (divisor>0){
                         divisor*=(-1);
@@ -424,9 +411,7 @@ public class Polynomial {
                         cFinal[i] += c[i]+cIntermedio[i];
 
                         if (i+1!=c.length){
-
                             cIntermedio[i+1]+= cFinal[i]*divisor;
-
                         }
                     }
 
@@ -443,10 +428,7 @@ public class Polynomial {
                         cFinal = new float[cFinal.length];
                         cIntermedio = new float[cIntermedio.length];
                     }
-
-
                 }
-
                 float[] copiaDiv = copiarArray(divisores);
                 divisores = new float[divisores.length+1];
 
@@ -458,7 +440,6 @@ public class Polynomial {
                     divisores[i]= copiaDiv[i];
                 }
 
-
                 c = new float[cFinal.length-1];
                 for (int i = 0; i < c.length ; i++) {
                     c[i] = cFinal[i];
@@ -466,26 +447,27 @@ public class Polynomial {
 
                 cIntermedio=new float[c.length];
                 cFinal=new float[c.length];
-
-
-                System.out.println(Arrays.toString(divisores));
                 ii--;
             }
+            int z=0;
+            for (int i = 0; i <c.length ; i++) {
 
+                if (c[i]==0)z++;
 
-
-            float a = c[0];
-            float b = c[1];
-            float s = c[2];
-            float discriminante = b*b - 4*a*s;
-            if (discriminante < 0){
-                return null;
             }
-            resultado = segundoGrado(c);
+            if (z!=c.length){
 
-
+                float a = c[0];
+                float b = c[1];
+                float s = c[2];
+                float discriminante = b*b - 4*a*s;
+                if (discriminante < 0){
+                    return null;
+                }
+                resultado = segundoGrado(c);
+                float[] newResultado = new float[resultado.length + divisores.length];
+            }
             float[] newResultado = new float[resultado.length + divisores.length];
-
             for (int i = 0; i < newResultado.length; i++) {
 
                 if (i>=resultado.length){
@@ -493,96 +475,13 @@ public class Polynomial {
                 }else {
                     newResultado[i] = resultado[i];
                 }
-
-
             }
             resultado = newResultado;
-            System.out.println(Arrays.toString(c));
-
-
-
         }
-
 
         resultado = burbuja(resultado);
         return resultado;
     }
-
-
-
-    private boolean comprovar(float n){
-
-        for (int i = 0; i < this.divisores.length; i++) {
-            if (this.divisores[i]==n){
-                return true;
-            }
-        }
-        return false;
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private float[] segundoGrado(float[]cofi){
-        float a = cofi[0];
-        float b = cofi[1];
-        float c = cofi[2];
-        float[] dev = new float[0];
-
-        float discriminante = b*b - 4*a*c;
-        if (discriminante == 0){
-            float x =(float) (-b + Math.sqrt(discriminante))/(2*a);
-            dev = new float[1];
-            dev[0]=x;
-            return dev;
-        }else {
-            float x1 =(float) (-b + Math.sqrt(discriminante))/(2*a);
-            float x2 =(float) (-b - Math.sqrt(discriminante))/(2*a);
-            dev = new float[2];
-            dev[0] = x1;
-            dev[1] = x2;
-        }
-        return dev;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     /**
@@ -698,11 +597,7 @@ public class Polynomial {
         return devolver;
     }
 
-
-
     //FUNCIONES QUE HE NECESITADO
-
-
 
     /**
      * @param coef1 Coeficientes del primero polinomio
@@ -913,9 +808,6 @@ public class Polynomial {
             this.coeficientes[j]=swap;
         }
     }
-
-
-
     private float[] burbuja(float[] ar){
         float swap;
         for (int j = ar.length; j > 0; j--) {
@@ -929,26 +821,37 @@ public class Polynomial {
         }
         return ar;
     }
+    private boolean comprovar(float n){
 
+        for (int i = 0; i < this.divisores.length; i++) {
+            if (this.divisores[i]==n){
+                return true;
+            }
+        }
+        return false;
 
-
-
-
-
-
-
-
-
-
-
-
-
-    public static void main(String[] args) {
-
-
-        Polynomial p = new Polynomial("x^4 + 12x^3 + 11x^2 - 132x + 108");
-        //-9, -6, 1, 2
-        float[] resultado = p.roots();
-        System.out.println(Arrays.toString(resultado) + " RESULTADO");
     }
+
+    private float[] segundoGrado(float[]cofi){
+        float a = cofi[0];
+        float b = cofi[1];
+        float c = cofi[2];
+        float[] dev = new float[0];
+
+        float discriminante = b*b - 4*a*c;
+        if (discriminante == 0){
+            float x =(float) (-b + Math.sqrt(discriminante))/(2*a);
+            dev = new float[1];
+            dev[0]=x;
+            return dev;
+        }else {
+            float x1 =(float) (-b + Math.sqrt(discriminante))/(2*a);
+            float x2 =(float) (-b - Math.sqrt(discriminante))/(2*a);
+            dev = new float[2];
+            dev[0] = x1;
+            dev[1] = x2;
+        }
+        return dev;
+    }
+
 }
