@@ -464,7 +464,6 @@ public class Polynomial {
      * Ejemplos:
      * [3,-2,0] --> 3x² -2x
      * [4,-1,0,11] --> 4x³ - x² + 11
-     *
      */
     // Torna la representació en forma de String del polinomi. Override d'un mètode de la classe Object
     @Override
@@ -676,27 +675,20 @@ public class Polynomial {
     private int buscarMayorPotencia(String polinomio){
         int mayorPotencia = 0;
         int potenciaActual=0;
-
         String aPasar="";
-
         // Encotrnamos la mayor potencia de todo el polinomo
         for (int i = 0; i < polinomio.length(); i++) {
-
             if (polinomio.charAt(i)=='x'){
-
                 if  (i+1>=polinomio.length()){
                     potenciaActual=1;
                 }else {
                     if (polinomio.charAt(i+1)=='^' ){
-
                         //Este bucle lo que hace es que te convierte numeros de mas de dos digitos a integer
                         for (int j = i+2; j < polinomio.length(); j++) {
-
                             if (polinomio.charAt(j)=='-' || polinomio.charAt(j)=='+'){
                                 i+=j-i;
                                 break;
                             }
-
                             aPasar += polinomio.charAt(j);
                         }
                         potenciaActual = Integer.parseInt(aPasar);
@@ -704,9 +696,7 @@ public class Polynomial {
                         potenciaActual=1;
                     }
                 }
-
             }
-
             if (potenciaActual > mayorPotencia){
                 mayorPotencia = potenciaActual;
             }
@@ -715,7 +705,13 @@ public class Polynomial {
         return mayorPotencia;
     }
 
-    // FUNCION QUE TE DEVUELVE UNA COPIA DE UN ARRAY QUE PASAMOS
+    /**
+     * @param array
+     * @return copia de array
+     *
+     * FUNCION QUE TE DEVUELVE UNA
+     * COPIA DE UN ARRAY QUE PASAMOS
+     */
     private float[] copiarArray(float[] array){
         float[]copia = new float[array.length];
         for (int i = 0; i < array.length; i++) {
@@ -759,19 +755,47 @@ public class Polynomial {
             this.coeficientes[j]=swap;
         }
     }
+
+    /**
+     * @param ar Array a ordenar
+     * @return Array ordenado
+     *
+     * Este metodo nos permite ordenar de menor a mayor.
+     * En el caso de que queramos ordenar de mayor a menor
+     * llamamos a este metodo y despues sobre el resultado
+     * que nos retorne llamamos al metodo invertir array
+     */
     private float[] burbuja(float[] ar){
-        float swap;
-        for (int j = ar.length; j > 0; j--) {
-            for (int i = 1; i < j; i++) {
-                if (ar[i - 1] > ar[i]) {
-                    swap = ar[i];
-                    ar[i] = ar[i - 1];
-                    ar[i - 1] = swap;
+        for (int i=ar.length, x=0; i>x; i--, x++) {
+
+            for (int j = 1; j < i; j++) {
+                if (ar[j - 1] > ar[j]) {
+                    float Swap1 = ar[j];
+                    ar[j] = ar[j - 1];
+                    ar[j - 1] = Swap1;
                 }
             }
+            for (int k = (i-1) ; k > x ; k--) {
+                if (ar[k-1] > ar[k]){
+                    float swap2 = ar[k];
+                    ar[k] = ar[k-1];
+                    ar[k-1] = swap2;
+                }
+            }
+
         }
         return ar;
     }
+
+
+    /**
+     * @param n Numero
+     * @param divisores array
+     * @return TRUE / FALSE
+     *
+     * Comprovamos si el numero que
+     * nos pasa pertenece al array que nos pasan
+     */
     private boolean comprovar(float n,float[] divisores){
 
         for (int i = 0; i < divisores.length; i++) {
@@ -783,6 +807,16 @@ public class Polynomial {
 
     }
 
+    /**
+     * @param cofi Array de floats de los coeficientes
+     *
+     * @return retornamos un array con las soluciones
+     *
+     * Este metodo lo que hace es calcular la solucion
+     * de una equación de segundo grado, solo entra en
+     * esta funcion si el discriminante es positivo,
+     * vamos que como minimo tiene 1 solucion
+     */
     private float[] segundoGrado(float[]cofi){
         float a = cofi[0];
         float b = cofi[1];
@@ -805,6 +839,15 @@ public class Polynomial {
         return dev;
     }
 
+    /**
+     * @param cofi Array de floats
+     * @param indice es el indice de la raiz que hay que calcular
+     * @param discriminante
+     *
+     * @return devolvemos un array con las soluciones
+     *
+     * tenemos un if con un else el cual definira si ese polinomio tiene 1 o 2 soluciones
+     */
     private float[] calculosPrincipioYfin(float[] cofi, float indice, float discriminante){
         float[]resultado=new float[0];
         if ((cofi.length-1)%2 == 0){
@@ -831,6 +874,14 @@ public class Polynomial {
     }
 
 
+    /**
+     * @param cofi Array de floats
+     * @return boolean TRUE/FALSE
+     *
+     *
+     * Metodo que nos sirve para comprovar si el array de coeficientes tiene
+     * todo a ceros entre la primera posicion y la untima exclusive
+     */
     private boolean prueba(float[] cofi){
         int x =0;
         for (int i = 0; i < cofi.length; i++) {
