@@ -1,9 +1,10 @@
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class Polynomial {
     //Atributos
     private float[] coeficientes;
+    private float[] copiaSeguridad;
+    private float[] divisores =  new float[0];
 
 
     /**
@@ -52,6 +53,7 @@ public class Polynomial {
             }
         }
 
+        this.copiaSeguridad = copiarArray(this.coeficientes);
     }
 
     /**
@@ -148,6 +150,9 @@ public class Polynomial {
                 }
             }
         }
+
+        this.copiaSeguridad = copiarArray(this.coeficientes);
+
     }
 
 
@@ -276,8 +281,21 @@ public class Polynomial {
 
     // Troba les arrels del polinomi, ordenades de menor a major
     public float[] roots() {
-
         float[] cofi = copiarArray(this.coeficientes);
+
+
+        boolean prueba = false;
+        int x =0;
+        for (int i = 0; i < cofi.length; i++) {
+            if (cofi[i]!=0)x++;
+        }
+
+        if (x==2 || (x==1 && cofi[cofi.length-1]==0)){
+            prueba=true;
+        }
+
+
+
 
         float[] resultado = new float[1];
         if (cofi.length==1){
@@ -301,6 +319,46 @@ public class Polynomial {
                 return null;
             }
             resultado = segundoGrado(cofi);
+        }else if(prueba){
+
+            //Todo es 0 excepto maximo exponente y termino independiente
+
+            float a = cofi[0];
+            float b = cofi[cofi.length-1]*(-1);
+
+
+
+            float discriminante = b/a;
+            float indice = cofi.length-1;
+            if (discriminante< 0 && (indice%2 == 0)){
+                return null;
+            }else if ((cofi.length-1)%2 == 0){
+                // DOS SOLUCIONES
+
+                resultado = new float[2];
+
+                resultado[0] =(float) Math.pow(discriminante, 1.0/indice);
+                resultado[1] = (float)Math.pow(discriminante, 1.0/indice)*(-1);
+
+            }else{
+                // UNA SOLUCION
+                boolean xx =false;
+                resultado = new float[1];
+                if (discriminante <0){
+                    discriminante=discriminante*(-1);
+                    xx = true;
+                }
+                resultado[0] = (float)Math.pow(discriminante, 1.0/indice);
+                if (xx){
+                    resultado[0]=resultado[0]*(-1);
+                }
+            }
+
+
+
+
+
+
         }else if (cofi.length == 5 && (cofi[1]==0 && cofi[3]==0)){
             //Bicuadratica
 
@@ -317,6 +375,7 @@ public class Polynomial {
             cofi1[1]=cofi[2];
             cofi1[2]=cofi[4];
             resultado =  segundoGrado(cofi1);
+
             float[] resultado1 = new float[resultado.length*2];
 
             for (int i = 0, j=0; i < resultado.length; i++, j++) {
@@ -324,54 +383,158 @@ public class Polynomial {
                 j++;
                 resultado1[j] = (float) Math.sqrt(resultado[i])*(-1) ;
             }
+
             resultado = resultado1;
-        }else{
 
-            //Todo es 0 excepto maximo exponente y termino independiente
-            int x =0;
-            for (int i = 0; i < cofi.length; i++) {
-                if (cofi[i]!=0)x++;
+        }else {
+
+            // RUFINI
+
+            float[] c = new float[this.coeficientes.length];
+            float[] cIntermedio = new float[c.length];
+            float[] cFinal = new float[c.length];
+
+            c= copiarArray(this.coeficientes);
+
+            int ii = c.length -3;
+            int divisor = 1;
+            float[]ccopia=new float[0];
+            while (ii>0){
+
+
+                float indepe = c[c.length-1];
+
+
+                if (comprovar(divisor)){
+                    if (divisor>0){
+                        divisor*=(-1);
+                    }else {
+                        divisor*=(-1);
+                        divisor++;
+                    }
+
+                    continue;
+                }
+
+                if (indepe<0)indepe*=(-1);
+                for (int j=0; divisor < indepe; divisor+=0) {
+
+                    for (int i = 0; i < c.length; i++) {
+
+                        cFinal[i] += c[i]+cIntermedio[i];
+
+                        if (i+1!=c.length){
+
+                            cIntermedio[i+1]+= cFinal[i]*divisor;
+
+                        }
+                    }
+
+                    if (cFinal[cFinal.length-1]==0){
+                        break;
+                    }else {
+                        if (divisor>0){
+                            divisor*=(-1);
+                        }else {
+                            divisor*=(-1);
+                            divisor++;
+                        }
+
+                        cFinal = new float[cFinal.length];
+                        cIntermedio = new float[cIntermedio.length];
+                    }
+
+
+                }
+
+                float[] copiaDiv = copiarArray(divisores);
+                divisores = new float[divisores.length+1];
+
+                for (int i = 0; i <divisores.length ; i++) {
+                    if (i>=copiaDiv.length){
+                        divisores[i] = divisor;
+                        break;
+                    }
+                    divisores[i]= copiaDiv[i];
+                }
+
+
+                c = new float[cFinal.length-1];
+                for (int i = 0; i < c.length ; i++) {
+                    c[i] = cFinal[i];
+                }
+
+                cIntermedio=new float[c.length];
+                cFinal=new float[c.length];
+
+
+                System.out.println(Arrays.toString(divisores));
+                ii--;
             }
-            if (x==2 || (x==1 && cofi[cofi.length-1]==0)){
-
-
-                float a = cofi[0];
-                float b = cofi[cofi.length-1];
 
 
 
-                float discriminante = a/b;
-                int indice = cofi.length-1;
-                if (discriminante< 0 && ((cofi.length-1)%2 == 0)){
-                    return null;
-                }else if ((cofi.length-1)%2 == 0){
-                    // DOS SOLUCIONES
+            float a = c[0];
+            float b = c[1];
+            float s = c[2];
+            float discriminante = b*b - 4*a*s;
+            if (discriminante < 0){
+                return null;
+            }
+            resultado = segundoGrado(c);
 
-                    resultado = new float[2];
 
-                    resultado[0] =(float) Math.pow(discriminante, 1/indice);
-                    resultado[1] = (float)Math.pow(discriminante, 1/indice)*(-1);
+            float[] newResultado = new float[resultado.length + divisores.length];
 
-                }else{
-                    // UNA SOLUCION
-                    resultado = new float[1];
-                    resultado[0] = (float)Math.pow(discriminante, 1/indice);
+            for (int i = 0; i < newResultado.length; i++) {
+
+                if (i>=resultado.length){
+                    newResultado[i] = divisores[i-resultado.length];
+                }else {
+                    newResultado[i] = resultado[i];
                 }
 
 
             }
-
+            resultado = newResultado;
+            System.out.println(Arrays.toString(c));
 
 
 
         }
 
 
-
-
         resultado = burbuja(resultado);
         return resultado;
     }
+
+
+
+    private boolean comprovar(float n){
+
+        for (int i = 0; i < this.divisores.length; i++) {
+            if (this.divisores[i]==n){
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     private float[] segundoGrado(float[]cofi){
@@ -382,26 +545,17 @@ public class Polynomial {
 
         float discriminante = b*b - 4*a*c;
         if (discriminante == 0){
-
             float x =(float) (-b + Math.sqrt(discriminante))/(2*a);
-            System.out.println("Solo hay una solucion: " + x);
             dev = new float[1];
             dev[0]=x;
             return dev;
-
-
         }else {
             float x1 =(float) (-b + Math.sqrt(discriminante))/(2*a);
             float x2 =(float) (-b - Math.sqrt(discriminante))/(2*a);
-            //imprime los valores
-            System.out.println("La solucion de x1: " + x1);
-            System.out.println("La solucion de x2: " + x2);
-
             dev = new float[2];
             dev[0] = x1;
             dev[1] = x2;
         }
-
         return dev;
     }
 
@@ -790,14 +944,11 @@ public class Polynomial {
 
 
     public static void main(String[] args) {
-        Polynomial p1 ;
-        Polynomial p2 ;
-        Polynomial p3 ;
-        Polynomial p4 ;
-
-        p1 = new Polynomial("x - 9");
-        p1.roots();
 
 
+        Polynomial p = new Polynomial("x^4 + 12x^3 + 11x^2 - 132x + 108");
+        //-9, -6, 1, 2
+        float[] resultado = p.roots();
+        System.out.println(Arrays.toString(resultado) + " RESULTADO");
     }
 }

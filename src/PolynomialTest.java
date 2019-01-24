@@ -1,5 +1,7 @@
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 
 /**
@@ -219,8 +221,9 @@ public class PolynomialTest {
     }
 
     private void assertEqualsFloats(float[] a1, float[] a2) {
+
         if (a1.length != a2.length)
-            assertEquals(1, 2);
+            assertEquals(Arrays.toString(a1), Arrays.toString(a2));
         for (int i = 0; i < a1.length; i++) {
             assertEquals(a1[i], a2[i], 0.001);
         }
