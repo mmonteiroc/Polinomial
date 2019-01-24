@@ -4,7 +4,7 @@ public class Polynomial {
     //Atributos
     private float[] coeficientes;
     private float[] copiaSeguridad;
-    private float[] divisores =  new float[0];
+
 
 
     /**
@@ -149,9 +149,7 @@ public class Polynomial {
                 }
             }
         }
-
         this.copiaSeguridad = copiarArray(this.coeficientes);
-
     }
 
 
@@ -221,11 +219,6 @@ public class Polynomial {
     }
 
 
-
-
-
-
-
     // Divideix el polinomi amb un altre. No modifica el polinomi actual (this). Genera un de nou
     // Torna el quocient i també el residu (ambdós polinomis)
     public Polynomial[] div(Polynomial p2) {
@@ -270,18 +263,12 @@ public class Polynomial {
 
     // Troba les arrels del polinomi, ordenades de menor a major
     public float[] roots() {
+        float[] divisores =  new float[0];
         float[] cofi = copiarArray(this.coeficientes);
 
 
-        boolean prueba = false;
-        int x =0;
-        for (int i = 0; i < cofi.length; i++) {
-            if (cofi[i]!=0)x++;
-        }
+        boolean prueba = prueba(cofi);
 
-        if (x==2 || (x==1 && cofi[cofi.length-1]==0)){
-            prueba=true;
-        }
 
 
         float[] resultado = new float[0];
@@ -318,25 +305,8 @@ public class Polynomial {
             float indice = cofi.length-1;
             if (discriminante< 0 && (indice%2 == 0)){
                 return null;
-            }else if ((cofi.length-1)%2 == 0){
-                // DOS SOLUCIONES
-
-                resultado = new float[2];
-                resultado[0] =(float) Math.pow(discriminante, 1.0/indice);
-                resultado[1] = (float)Math.pow(discriminante, 1.0/indice)*(-1);
-
             }else{
-                // UNA SOLUCION
-                boolean xx =false;
-                resultado = new float[1];
-                if (discriminante <0){
-                    discriminante=discriminante*(-1);
-                    xx = true;
-                }
-                resultado[0] = (float)Math.pow(discriminante, 1.0/indice);
-                if (xx){
-                    resultado[0]=resultado[0]*(-1);
-                }
+                resultado=calculosPrueba(cofi, indice, discriminante);
             }
 
         }else if (cofi.length == 5 && (cofi[1]==0 && cofi[3]==0)){
@@ -376,23 +346,16 @@ public class Polynomial {
 
             c= copiarArray(this.coeficientes);
 
-            int ii = c.length -3;
+            int ii = 1;
             int divisor = 1;
             float[]ccopia=new float[0];
+
+            boolean prova = false;
             while (ii>0){
 
-                int z=0;
-                for (int i = 0; i <c.length ; i++) {
-
-                    if (c[i]==0)z++;
-
-                }
-                if (z==c.length){
-                    break;
-                }
 
                 float indepe = c[c.length-1];
-                if (comprovar(divisor)){
+                if (comprovar(divisor,divisores)){
                     if (divisor>0){
                         divisor*=(-1);
                     }else {
@@ -449,40 +412,72 @@ public class Polynomial {
                 cFinal=new float[c.length];
                 ii--;
             }
-            int z=0;
-            for (int i = 0; i <c.length ; i++) {
 
-                if (c[i]==0)z++;
+            this.coeficientes=c;
+            float[] otrosResultado = roots();
 
+            int i = 0;
+
+            resultado = new float[divisores.length+otrosResultado.length];
+            while (i<divisores.length){
+                resultado[i] = divisores[i];
+            i++;
             }
-            if (z!=c.length){
+            while (i-divisores.length < otrosResultado.length){
 
-                float a = c[0];
-                float b = c[1];
-                float s = c[2];
-                float discriminante = b*b - 4*a*s;
-                if (discriminante < 0){
-                    return null;
-                }
-                resultado = segundoGrado(c);
-                float[] newResultado = new float[resultado.length + divisores.length];
+                resultado[i]=otrosResultado[i-divisores.length];
+                i++;
             }
-            float[] newResultado = new float[resultado.length + divisores.length];
-            for (int i = 0; i < newResultado.length; i++) {
 
-                if (i>=resultado.length){
-                    newResultado[i] = divisores[i-resultado.length];
-                }else {
-                    newResultado[i] = resultado[i];
-                }
-            }
-            resultado = newResultado;
+
         }
 
         resultado = burbuja(resultado);
         return resultado;
     }
 
+
+
+
+    private float[] calculosPrueba(float[] cofi, float indice, float discriminante){
+        float[]resultado=new float[0];
+        if ((cofi.length-1)%2 == 0){
+            // DOS SOLUCIONES
+
+            resultado = new float[2];
+            resultado[0] =(float) Math.pow(discriminante, 1.0/indice);
+            resultado[1] = (float)Math.pow(discriminante, 1.0/indice)*(-1);
+
+        }else{
+            // UNA SOLUCION
+            boolean xx =false;
+            resultado = new float[1];
+            if (discriminante <0){
+                discriminante=discriminante*(-1);
+                xx = true;
+            }
+            resultado[0] = (float)Math.pow(discriminante, 1.0/indice);
+            if (xx){
+                resultado[0]=resultado[0]*(-1);
+            }
+        }
+        return resultado;
+    }
+
+
+
+
+    private boolean prueba(float[] cofi){
+        int x =0;
+        for (int i = 0; i < cofi.length; i++) {
+            if (cofi[i]!=0)x++;
+        }
+
+        if (x==2 || (x==1 && cofi[cofi.length-1]==0)){
+            return true;
+        }
+        return false;
+    }
 
     /**
      * @param objeto donde objeto es otro polinomio
@@ -821,10 +816,10 @@ public class Polynomial {
         }
         return ar;
     }
-    private boolean comprovar(float n){
+    private boolean comprovar(float n,float[] divisores){
 
-        for (int i = 0; i < this.divisores.length; i++) {
-            if (this.divisores[i]==n){
+        for (int i = 0; i < divisores.length; i++) {
+            if (divisores[i]==n){
                 return true;
             }
         }

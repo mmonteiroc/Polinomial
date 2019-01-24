@@ -168,7 +168,7 @@ public class PolynomialTest {
 
 
         p = new Polynomial("x^7 + 89x^6 - 90x^5 + 10x^2 +890x - 900");
-        //assertEqualsFloats(new float[]{-90f, -1.5849f, 1f}, p.roots());
+        assertEqualsFloats(new float[]{-90f, -1.5849f, 1f}, p.roots());
     }
 
     @Test
