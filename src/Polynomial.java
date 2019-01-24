@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 public class Polynomial {
     //Atributos
     private float[] coeficientes;
@@ -267,7 +265,7 @@ public class Polynomial {
         float[] cofi = copiarArray(this.coeficientes);
 
 
-        boolean prueba = prueba(cofi);
+        boolean PrincipioFin = prueba(cofi);
 
 
 
@@ -294,8 +292,7 @@ public class Polynomial {
                 return null;
             }
             resultado = segundoGrado(cofi);
-        }else if(prueba){
-
+        }else if(PrincipioFin){
             //Todo es 0 excepto maximo exponente y termino independiente
 
             float a = cofi[0];
@@ -306,7 +303,7 @@ public class Polynomial {
             if (discriminante< 0 && (indice%2 == 0)){
                 return null;
             }else{
-                resultado=calculosPrueba(cofi, indice, discriminante);
+                resultado= calculosPrincipioYfin(cofi, indice, discriminante);
             }
 
         }else if (cofi.length == 5 && (cofi[1]==0 && cofi[3]==0)){
@@ -432,52 +429,11 @@ public class Polynomial {
 
         }
 
+        this.coeficientes = copiaSeguridad;
         resultado = burbuja(resultado);
         return resultado;
     }
 
-
-
-
-    private float[] calculosPrueba(float[] cofi, float indice, float discriminante){
-        float[]resultado=new float[0];
-        if ((cofi.length-1)%2 == 0){
-            // DOS SOLUCIONES
-
-            resultado = new float[2];
-            resultado[0] =(float) Math.pow(discriminante, 1.0/indice);
-            resultado[1] = (float)Math.pow(discriminante, 1.0/indice)*(-1);
-
-        }else{
-            // UNA SOLUCION
-            boolean xx =false;
-            resultado = new float[1];
-            if (discriminante <0){
-                discriminante=discriminante*(-1);
-                xx = true;
-            }
-            resultado[0] = (float)Math.pow(discriminante, 1.0/indice);
-            if (xx){
-                resultado[0]=resultado[0]*(-1);
-            }
-        }
-        return resultado;
-    }
-
-
-
-
-    private boolean prueba(float[] cofi){
-        int x =0;
-        for (int i = 0; i < cofi.length; i++) {
-            if (cofi[i]!=0)x++;
-        }
-
-        if (x==2 || (x==1 && cofi[cofi.length-1]==0)){
-            return true;
-        }
-        return false;
-    }
 
     /**
      * @param objeto donde objeto es otro polinomio
@@ -847,6 +803,44 @@ public class Polynomial {
             dev[1] = x2;
         }
         return dev;
+    }
+
+    private float[] calculosPrincipioYfin(float[] cofi, float indice, float discriminante){
+        float[]resultado=new float[0];
+        if ((cofi.length-1)%2 == 0){
+            // DOS SOLUCIONES
+
+            resultado = new float[2];
+            resultado[0] =(float) Math.pow(discriminante, 1.0/indice);
+            resultado[1] = (float)Math.pow(discriminante, 1.0/indice)*(-1);
+
+        }else{
+            // UNA SOLUCION
+            boolean xx =false;
+            resultado = new float[1];
+            if (discriminante <0){
+                discriminante=discriminante*(-1);
+                xx = true;
+            }
+            resultado[0] = (float)Math.pow(discriminante, 1.0/indice);
+            if (xx){
+                resultado[0]=resultado[0]*(-1);
+            }
+        }
+        return resultado;
+    }
+
+
+    private boolean prueba(float[] cofi){
+        int x =0;
+        for (int i = 0; i < cofi.length; i++) {
+            if (cofi[i]!=0)x++;
+        }
+
+        if (x==2 || (x==1 && cofi[cofi.length-1]==0)){
+            return true;
+        }
+        return false;
     }
 
 }
