@@ -3,8 +3,6 @@ public class Polynomial {
     private float[] coeficientes;
     private float[] copiaSeguridad;
 
-
-
     /**
      * Constructor per defecte. Genera un polinomi zero
      */
@@ -12,6 +10,7 @@ public class Polynomial {
         coeficientes = new float[1];
         coeficientes[0]=0;
     }
+
 
     /**
      * @param coeficientes
@@ -60,7 +59,6 @@ public class Polynomial {
      *
      *
      */
-    // Constructor a partir d'un string
     public Polynomial(String stringPolinomio) {
 
         if (stringPolinomio.length()==1||(stringPolinomio.length()==2 && (stringPolinomio.charAt(0)=='-'||stringPolinomio.charAt(0)=='+'))){
@@ -264,13 +262,8 @@ public class Polynomial {
         float[] divisores =  new float[0];
         float[] cofi = copiarArray(this.coeficientes);
 
-
         boolean PrincipioFin = prueba(cofi);
-
-
-
         float[] resultado = new float[0];
-
 
         if (cofi.length==1){
             //No hay solucion
@@ -426,9 +419,7 @@ public class Polynomial {
                 i++;
             }
 
-
         }
-
         this.coeficientes = copiaSeguridad;
         resultado = burbuja(resultado);
         return resultado;
@@ -893,5 +884,4 @@ public class Polynomial {
         }
         return false;
     }
-
 }
