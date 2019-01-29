@@ -56,8 +56,9 @@ public class Polynomial {
     /**
      * @param stringPolinomio  Recibimos un polinomio en formato de String (2x^3 - 4 + 5x^2 + 32)
      *
-     *
-     *
+     * Esta funcion va leyendo el string monomio a monomio y lo que hace es ir
+     * pasando esos monomios a otra funcion externa la cual se encargara de mirar la potencia de ese monomio
+     * y añadirlo al array de coeficientes donde le toca
      */
     public Polynomial(String stringPolinomio) {
 
@@ -215,8 +216,15 @@ public class Polynomial {
     }
 
 
-    // Divideix el polinomi amb un altre. No modifica el polinomi actual (this). Genera un de nou
-    // Torna el quocient i també el residu (ambdós polinomis)
+    /**
+     * @param p2 Segundo polinomio
+     * @return devuelve un array de polinomios
+     *
+     * Esta funcion utiliza un bucle anidado a otro leyendo dividendo
+     * a dividendo y leyendo todos los divisores y los va asignando a la posicion que
+     * le toca en el array de resultados, cuando acaba lo que hace
+     * es retornar el array de residuo tambien.
+     */
     public Polynomial[] div(Polynomial p2) {
 
         float[] dividendo = copiarArray(this.coeficientes);
@@ -257,7 +265,14 @@ public class Polynomial {
     }
 
 
-    // Troba les arrels del polinomi, ordenades de menor a major
+    /**
+     * @return Retornamos un array de floats las cuales son las raices de ese polinomio ordenadas de menor a mayor
+     *
+     * En este metodo lo que hacemos es ir comprovando posibilidades de sacar las raices (dependiendo
+     * si son polinomios de primer grado, segundo, bicuadraticas etc)
+     * entonces si no encontramos ninguna de esas posibilidades, esta funcion hara 1 vez rufini y despues hara recursividad
+     * para volver a probar si podemos sacar las siguientes soluciones sin rufini
+     */
     public float[] roots() {
         float[] divisores =  new float[0];
         float[] cofi = copiarArray(this.coeficientes);
